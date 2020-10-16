@@ -127,3 +127,11 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Ignore files/folders
+.idea/*
+files/data/coordinates_1.yml
+__pycache__/*
+*.pyc
+files/images/*.jpg
+__pycache__/*.pyc
