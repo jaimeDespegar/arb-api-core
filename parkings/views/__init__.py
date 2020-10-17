@@ -1,4 +1,4 @@
 #from .Parkings import Parkings
-#from .Configuration import Configuration
+from .Parkings import ParkingsView
 
-#__all__ = ['Parkings', 'Configuration']
+__all__ = ['ParkingsView']
