@@ -9,10 +9,18 @@ class ParkingsView():
 
     @api_view(['POST'])
     def moveCreate(request):
-        serializer = MovesSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-        return Response(serializer.data)
+        data = request.data['registers']
+        responseData = []
+        for register in data:
+            serializer = MovesSerializer(data=register)
+            if serializer.is_valid():
+                serializer.save()
+                responseData.append(serializer.data)
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(responseData, status=status.HTTP_201_CREATED)
+        
 
     @api_view(['GET', 'POST', 'PUT'])
     def parkings_list(request):
