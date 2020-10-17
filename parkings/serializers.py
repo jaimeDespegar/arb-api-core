@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import MoveCamera
+from .models import MoveCamera,BicycleParking
 
 # class ParkingsSerializer(serializers.ModelSerializer):
 #     class Meta:
@@ -11,3 +11,8 @@ class MovesSerializer(serializers.ModelSerializer):
     class Meta:
         model = MoveCamera
         fields = ("placeNumber", "occupied", "pathPhoto", "hourGenerated")
+
+class BicycleParkingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BicycleParking
+        fields = ("description",)
