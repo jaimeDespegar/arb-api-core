@@ -20,11 +20,11 @@ class ParkingsView():
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         return Response(responseData, status=status.HTTP_201_CREATED)
-        
 
-    @api_view(['GET', 'POST', 'PUT'])
-    def parkings_list(request):
-        return JsonResponse({}, safe=False)
+
+    #@api_view(['GET', 'POST', 'PUT'])
+    #def parkings_list(request):
+    #    return JsonResponse({}, safe=False)
         # if request.method == 'GET':
         #     parkings = Parkings.objects.all()
         #     serializer = ParkingsSerializer(parkings, many=True)

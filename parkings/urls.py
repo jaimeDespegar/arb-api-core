@@ -1,8 +1,11 @@
 from django.urls import path
-from .views import ParkingsView, EstadiaView
+from .views import ParkingsView, BicycleParkingView, EstadiaView
 
 urlpatterns = [
     path('move-create/', ParkingsView.moveCreate, name="move-create"),
+    path('bicycleParking-create/', BicycleParkingView.bicycleParkingCreate, name="bicycleParking-create"),
+    path('bicycleParking-getAll/', BicycleParkingView.bicycleParkingGetAll, name="bicycleParking-getAll"),
+    path('bicycleParking-get/<int:pk>/', BicycleParkingView.bicycleParkingGet, name="bicycleParking-get")
     
     # Estadia
     path('estadias/', EstadiaView.getAll),
