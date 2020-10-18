@@ -8,7 +8,7 @@ urlpatterns = [
     path('estadias/', EstadiaView.getAll),
     #path('estadia-detail/<str:user>/', EstadiaView.estadiaDetail, name="estadia-detail"),
     path('estadia-create/', EstadiaView.estadiaCreate, name="estadia-create"),
-    path('estadia-update/', EstadiaView.estadiaUpdate, name="estadia-update"),
+    path('estadia-update/<int:pk>/', EstadiaView.estadiaUpdate, name="estadia-update"),
     
     # path('parkings/<int:pk>/', ParkingsView.parking_detail),
     # path('configuration/', ConfigurationView.configuration_list),
