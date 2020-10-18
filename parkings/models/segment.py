@@ -7,7 +7,7 @@ class Segment(models.Model):
     photoPath = models.CharField(max_length=200)
     datetime = models.DateTimeField(default=timezone.now)
     estadia = models.ForeignKey(Estadia, on_delete=models.CASCADE, default=None)
-   
+    
 
     def __str__(self):
         return 'Segment: tipo '+self.typeSegment+', foto '+self.photoPath +' , datetime  '+ self.datetime.strftime("%m/%d/%Y - %H:%M:%S") 
