@@ -19,7 +19,19 @@ class BicycleParkingService:
         response = []
         for p in parkings:
             places = Place.objects.filter(bicycleParking=p)
-            bicycleAndPace = BicycleAndPlaces(p.description,p.number ,places)
-            response.append(bicycleAndPace)
+            placesAux = []
+            for place in places:
+                aux = {
+                        "placeNumer": place.placeNumber,
+                        "occupied": place.occupied
+                      }
+                placesAux.append(aux)  
+            
+            bicycleAndPlace = {
+                "description": p.description,
+                "number": p.number,
+                "places": placesAux
+            }
+            response.append(bicycleAndPlace)
 
         return response

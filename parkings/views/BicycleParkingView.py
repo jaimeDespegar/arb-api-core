@@ -7,7 +7,6 @@ from ..models.bicycleParking import BicycleParking
 from ..models.place import Place
 from ..services.bicycleParkingService import BicycleParkingService
 
-
 class BicycleParkingView():
 
     #Estacionar Bicicleta

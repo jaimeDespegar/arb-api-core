@@ -10,5 +10,3 @@ class BicycleAndPlaces():
 
     def __str__(self):
         return 'Descripcion ' + str(self.description) +', numero de bicicletero ' + str(self.numBicycle) +', lista de lugares' + str(self.listPlaces) 
-
-    
