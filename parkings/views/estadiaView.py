@@ -52,17 +52,3 @@ class EstadiaView():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.data)
     
-
-#     {
-# "placeUsed": 2,
-# "llegada": {
-# "photoPath": "foto test validacion"
-# }
-# }
-
-#     {
-# "placeUsed": 2,
-# "salida": {
-# "photoPath": "foto test validacion salida"
-# }
-# }

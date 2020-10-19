@@ -5,6 +5,8 @@ from rest_framework.response import Response
 from ..serializers import BicycleParkingSerializer
 from ..models.bicycleParking import BicycleParking
 from ..models.place import Place
+from ..services.bicycleParkingService import BicycleParkingService
+
 
 class BicycleParkingView():
 
@@ -40,12 +42,5 @@ class BicycleParkingView():
 
     @api_view(['GET'])
     def bicycleParkingAvailability(request):
-        parkings = BicycleParking.objects.all()
-        freePlaces = 0
-        for p in parkings:
-            places = Place.objects.filter(bicycleParking=p)
-            for place in places:
-                if not place.occupied:
-                    freePlaces = freePlaces + 1
-        
+        freePlaces = BicycleParkingService.getCountFreePlaces()        
         return Response({'freePlaces':freePlaces})
