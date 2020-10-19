@@ -64,3 +64,9 @@ class BicycleParkingView():
         parking = BicycleParking.objects.get(id=pk)
         parking.delete()
         return Response("parking borrado satisfactoriamente")
+
+    # GET trae todas los bicicleteros y lugares(para el guardia)
+    @api_view(['GET'])
+    def bicycleParkingAndPlacesGetAll(request):
+        tasks = BicycleParkingService.getDescriptonBicycleParking()
+        return Response(tasks)

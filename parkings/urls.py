@@ -9,6 +9,7 @@ urlpatterns = [
     path('bicycleParking-availability/', BicycleParkingView.bicycleParkingAvailability, name="bicycleParkingAvailability"),
     path('bicycleParking-update/<int:pk>/', BicycleParkingView.bicicleParkingUpdate, name="bicycleParking-update"),
     path('bicycleParking-delete/<int:pk>/', BicycleParkingView.bicicleParkingDelete, name="bicycleParking-delete"),
+    path('bicycleParkingAndPlaces/', BicycleParkingView.bicycleParkingAndPlacesGetAll, name="bicycleParkingAndPlaces"),
 
     # Estadia
     path('estadias/', EstadiaView.getAll),

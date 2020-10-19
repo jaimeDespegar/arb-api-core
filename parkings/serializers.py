@@ -15,7 +15,7 @@ class MovesSerializer(serializers.ModelSerializer):
 class BicycleParkingSerializer(serializers.ModelSerializer):
     class Meta:
         model = BicycleParking
-        fields = ("description",)
+        fields = ("description","number")#se agregó number
 
 class EstadiaSerializer(serializers.ModelSerializer):
     class Meta:
