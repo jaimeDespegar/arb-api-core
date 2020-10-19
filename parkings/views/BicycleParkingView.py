@@ -44,3 +44,23 @@ class BicycleParkingView():
     def bicycleParkingAvailability(request):
         freePlaces = BicycleParkingService.getCountFreePlaces()        
         return Response({'freePlaces':freePlaces})
+
+    #servicio para que el guardia modifique descripcion bicicletero ()
+    @api_view(['PUT'])
+    def bicicleParkingUpdate(request, pk):
+        parking = BicycleParking.objects.get(id=pk)
+        serializer = BicycleParkingSerializer(instance=parking, data=request.data)
+        
+        if serializer.is_valid():
+            serializer.save()
+            print("Modificación de descripcion de bicicletero exitoso")
+        else:
+            print("Error al modificar descripcion del bicicletero")
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.data)
+
+    @api_view(['DELETE'])
+    def bicicleParkingDelete(request, pk):
+        parking = BicycleParking.objects.get(id=pk)
+        parking.delete()
+        return Response("parking borrado satisfactoriamente")
