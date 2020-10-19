@@ -15,12 +15,12 @@ class MovesSerializer(serializers.ModelSerializer):
 class BicycleParkingSerializer(serializers.ModelSerializer):
     class Meta:
         model = BicycleParking
-        fields = ("description","number")#se agregó number
+        fields = '__all__'
 
 class EstadiaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Estadia
-        fields = '__all__'#fields = ("placeUsed",)        
+        fields = '__all__'       
 
 class SegmentSerializer(serializers.ModelSerializer):
     class Meta:
