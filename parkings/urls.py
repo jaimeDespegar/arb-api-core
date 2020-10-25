@@ -17,7 +17,6 @@ urlpatterns = [
     path('estadia-create/', EstadiaView.estadiaCreate, name="estadia-create"),
     path('estadia-update/<int:pk>/', EstadiaView.estadiaUpdate, name="estadia-update"),
     
-    # path('parkings/<int:pk>/', ParkingsView.parking_detail),
-    # path('configuration/', ConfigurationView.configuration_list),
-    # path('configuration/<str:pk>/', ConfigurationView.configuration_detail)
+    #path('parkings-validate/<int:x>/<int:y>', ValidationView.validateLocation)
+    
 ]

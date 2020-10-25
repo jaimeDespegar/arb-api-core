@@ -20,18 +20,28 @@ class EstadiaView():
         estadia = request.data
         validator = Validator()
         serializer = EstadiaSerializer(data=estadia)
-
-        if serializer.is_valid() and validator.isValidSegment(estadia, "LLEGADA"):
-            estadiaSaved = serializer.save()
-            llegada = estadia['llegada']
-            Segment.objects.create(typeSegment='LLEGADA', 
-                                   photoPath=llegada['photoPath'], 
-                                   estadia=estadiaSaved)
-            print("Estadia creada exitosamente")
+        dataError = {}
+        
+        if serializer.is_valid():
+            if validator.validateLocation():
+                if validator.isValidSegment(estadia, "LLEGADA"):
+                    estadiaSaved = serializer.save()
+                    llegada = estadia['llegada']
+                    Segment.objects.create(typeSegment='LLEGADA', 
+                                        photoPath=llegada['photoPath'], 
+                                        estadia=estadiaSaved)
+                    print("Estadia creada exitosamente")
+                else:
+                    dataError = {'message': 'Error en estadia al generar la llegada'}                    
+            else:
+                dataError = {'message': 'location is not valid'}
         else:
-            print("Error en estadia al generar la llegada")
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        return Response(serializer.data)
+            dataError = serializer.errors
+        
+        if dataError is not None:
+            return Response(dataError, status=status.HTTP_400_BAD_REQUEST)
+        else: 
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
     
 
     @api_view(['PUT'])
