@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import MoveCamera, BicycleParking, Estadia, Segment
+from .models import MoveCamera, BicycleParking, Estadia, Segment, Notification
 
 # class ParkingsSerializer(serializers.ModelSerializer):
 #     class Meta:
@@ -25,4 +25,10 @@ class EstadiaSerializer(serializers.ModelSerializer):
 class SegmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Segment
-        fields = ("photoPath","datetime","estadia")        
+        fields = ("photoPath","datetime","estadia") 
+
+class NotificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notification
+        fields = '__all__'  
+        #fields = ("userName", "photoPath")

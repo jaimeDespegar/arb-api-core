@@ -1,6 +1,7 @@
 #from .Parkings import Parkings
-from .Parkings import ParkingsView
+from .MoveCameraView import MoveCameraView
 from .estadiaView import EstadiaView
 from .BicycleParkingView import BicycleParkingView
+from .NotificationView import NotificationView
 
-__all__ = ['ParkingsView', 'BicycleParkingView', 'EstadiaView']
+__all__ = ['MoveCameraView', 'BicycleParkingView', 'EstadiaView', 'NotificationView']
