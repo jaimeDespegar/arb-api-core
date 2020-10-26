@@ -1,5 +1,7 @@
 from ..models import Estadia, Segment
 from ...api.responses.estadiaResponse import EstadiaResponse, SegmentResponse
+from ..models import MoveCamera, Estadia
+import time
 
 class EstadiaService():
 
@@ -31,3 +33,33 @@ class EstadiaService():
     def findAnonymous(self):
         # TODO
         return []
+
+
+    def createAnonymousCase(self):
+        tolerancia = 5
+        arrivalMoves= MoveCamera.objects.filter(occupied=True, registered=False)
+
+        for move in arrivalMoves:
+            now = time.time()
+            difference = int(now - move.createDate)
+
+            if(difference >= tolerancia):
+                anonimo = Estadia.objects.create(placeUsed=move.placeNumber, 
+                                                 userEmail='Anonimo',
+                                                 isAnonymous=True)
+                
+                Segment.objects.create(typeSegment='LLEGADA', 
+                                       photoPath=move.pathPhoto, 
+                                       estadia=anonimo)
+                #move.registered = True
+                #move.save()
+                print('crear estadia anonima')
+            else:
+                print('no paso el tiempo de tolerancia')
+    
+    
+    def updateAnonymousCase(self):
+        exitMoves = MoveCamera.objects.filter(occupied=False, registered=False)
+        
+        for move in exitMoves:
+            estadia = Estadia.objects.get(placeUsed=move.placeNumber, userEmail='Anonimo')
