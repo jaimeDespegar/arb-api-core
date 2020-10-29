@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import MoveCameraView, BicycleParkingView, EstadiaView, NotificationView
+from .views import MoveCameraView, BicycleParkingView, EstadiaView, NotificationView, RegisterUserView
 
 urlpatterns = [
     path('move-create/', MoveCameraView.moveCreate, name="move-create"),
@@ -21,6 +21,18 @@ urlpatterns = [
     path('move-suspected-create/', MoveCameraView.checkSuspectedMove, name="move-suspected-create"),
     path('move-notification-create/', NotificationView.notificationMoveCreate, name="move-notification-create"),
     path('move-notification-get/<int:pk>/', NotificationView.notificationGet, name="move-notification-get"),
+
+    # # Registros de Usuarios
+    # path('user-create/', RegisterUserView.registerUserCreate, name="user-create"),
+    # path('user-getAll/', RegisterUserView.registerUserGetAll, name="user-getAll"),
+    # path('user-get/<int:pk>/', RegisterUserView.registerUserGet, name="user-get"),
+    # Registros de Usuarios
+    path('bikeOwner-create/', RegisterUserView.registerBikeOwnerCreate, name="bikeOwner-create"),
+    path('bikeOwner-getAll/', RegisterUserView.registerBikeOwnerGetAll, name="bikeOwner-getAll"),
+    path('bikeOwner-get/<int:pk>/', RegisterUserView.registerBikeOwnerGet, name="bikeOwner-get"),
+    path('bikeOwner-update/<int:pk>/', RegisterUserView.registerBikeOwnerUpdate, name="bikeOwner-update"),
+
+
 
     # path('parkings/<int:pk>/', MoveCameraView.parking_detail),
     # path('configuration/', ConfigurationView.configuration_list),

@@ -16,6 +16,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'django_crontab',
     'django.contrib.sites',  # <-------------*
     'django.contrib.admin',
     'django.contrib.auth',
@@ -116,3 +117,11 @@ SITE_ID=1
 
 # CELERY_RESULT_BACKEND = 'djcelery.backends.database:DatabaseBackend'
 # CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
+
+CRONJOBS = [
+    ('*/2 * * * *', 'parkings.cron.my_cron_job')
+]
+
+# CRONJOBS = [
+#     ('0 0 1 * *', 'myapp.cron.other_cron_job', ['pos_arg1', 'pos_arg2'], {'verbose': 'key_arg'}),
+# ]

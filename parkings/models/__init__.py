@@ -5,5 +5,6 @@ from .place import Place
 from .estadia import Estadia
 from .moveCamera import MoveCamera
 from .bicycleAndPlaces import BicycleAndPlaces
+from .user import User, BikeOwner
 
-__all__ = ['BicycleParking', 'Segment', 'Notification', 'Place', 'Estadia', 'MoveCamera', 'BicycleAndPlaces']
+__all__ = ['BicycleParking', 'Segment', 'Notification', 'Place', 'Estadia', 'MoveCamera', 'BicycleAndPlaces', 'User','BikeOwner']
