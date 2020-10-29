@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_cron',
     'rest_framework',
     'parkings'
 ]
@@ -106,6 +107,10 @@ STATIC_URL = '/static/'
 
 SITE_ID=1
 
+CRON_CLASSES = [
+    # in-quotes your_appname/any_subdirectory/cronjob_name
+    "parkings.cron.PushCronJob",
+]
 # Python Code
 # project/project/settings.py
 

@@ -1,13 +1,14 @@
 from ..models import Estadia, Segment
-from ...api.responses.estadiaResponse import EstadiaResponse, SegmentResponse
+from ..responses import EstadiaResponse, SegmentResponse
 from ..models import MoveCamera, Estadia
 import time
+
 
 class EstadiaService():
 
     def findByUser(self, userName):
-        # TODO
-        return []
+        estadias = Estadia.objects.filter(userName=userName)
+        return estadias
 
 
     def findByRangeDate(self, fromDate, toDate):
@@ -16,23 +17,40 @@ class EstadiaService():
 
         for est in estadias:
             segments = Segment.objects.filter(estadia=est)
-            for segment in segments: 
-                arrival = None
-                departure = None
+            arrival = {}
+            departure = {}
+            for segment in segments:    
                 if segment.segmentType == 'LLEGADA':
-                    arrival = SegmentResponse(segment.datetime, segment.photoPath)
+                    arrival = {
+                        'dateCreated': segment.datetime,
+                        'photo': segment.photoPath
+                    }
                 else:
-                    departure = SegmentResponse(segment.datetime, segment.photoPath) 
+                    departure = {
+                        'dateCreated': segment.datetime,
+                        'photo': segment.photoPath
+                    }
 
-            e = EstadiaResponse('Test', arrival, departure, est.placeUsed)
+            e = {
+                'userName': 'Test', 
+                'arrival': arrival, 
+                'departure': departure,
+                'placeUsed': est.placeUsed,
+                'dateCreated': est.dateCreated
+            }
             responses.append(e)
-        
+    
         return responses
 
 
     def findAnonymous(self):
-        # TODO
-        return []
+        fromDate='init date'
+        toDate='final date'
+        
+        estadias = Estadia.objects.filter(dateCreated__lte=toDate, 
+                                          dateCreated__gte=fromDate,
+                                          isAnonymous=True)
+        return estadias
 
 
     def createAnonymousCase(self):

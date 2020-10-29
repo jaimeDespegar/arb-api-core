@@ -1,10 +1,13 @@
 from rest_framework import status
 from rest_framework.decorators import api_view
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from rest_framework.response import Response
 from ..serializers import SegmentSerializer, EstadiaSerializer
 from ..models import Estadia, Segment, Place
 from ..services.validator import Validator
+from ..services import EstadiaService
+from django.core import serializers
+import json
 
 class EstadiaView():
 
@@ -62,3 +65,10 @@ class EstadiaView():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.data)
     
+    
+    @api_view(['GET'])
+    def findEstadias(request, fromDate, toDate):
+        print('from ' + fromDate + ' , to ' + toDate)
+        service = EstadiaService()
+        result = service.findByRangeDate(fromDate, toDate)
+        return Response(result)
