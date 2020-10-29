@@ -9,24 +9,21 @@ class User(models.Model):
         return 'User '+  self.name + ', email ' + self.email
 
 class BikeOwner(User):
-
-    def __init__(self, email, password):
-        super().__init__(email, password)
-        self.bicyclePhoto = models.CharField(max_length=200)
-        self.profilePhoto = models.CharField(max_length=200)
+    bicyclePhoto = models.CharField(max_length=200)
+    profilePhoto = models.CharField(max_length=200)
 
 
-class Admin(User):
+# class Admin(User):
 
-    def __init__(self, email, password):
-        super().__init__(email, password)
-        self.name = models.CharField(max_length=200)
+#     def __init__(self, email, password):
+#         super().__init__(email, password)
+#         self.name = models.CharField(max_length=200)
 
-    def __str__(self):
-        return 'Admin ' + self.name
+#     def __str__(self):
+#         return 'Admin ' + self.name
 
-class SecurityPerson(User):
+# class SecurityPerson(User):
 
-    def __init__(self, email, password):
-        super().__init__(email, password)
-        name = models.CharField(max_length=200)
+#     def __init__(self, email, password):
+#         super().__init__(email, password)
+#         name = models.CharField(max_length=200)
