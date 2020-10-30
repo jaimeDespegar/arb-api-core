@@ -19,15 +19,17 @@ class MoveCameraView():
             serializer = MovesSerializer(data=register)
             if serializer.is_valid():
                 moveSaved = serializer.save()
-                if (not moveSaved.occupied):
+                if (moveSaved.occupied):
                     service.createAnonymousStay(moveSaved)
                     print("estadia anonima, ingreso")
                 else:
                     print("es egreso no se creo nada")
-                responseData.append(serializer.data)
-                if (register.occupied == False):
                     NotificationEgress.objects.create(userName='userName',photoPath=register.pathPhoto,
                     place= register.placeNumber, isOk = False, isSuspected = True, estadia=1)
+                    
+                responseData.append(serializer.data)
+                
+                    
             else:
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
