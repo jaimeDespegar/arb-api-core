@@ -23,7 +23,9 @@ class MoveCameraView():
                     print("es egreso no se creo nada")
                     
                     estadiaFinal = Estadia.objects.filter(placeUsed= moveSaved.placeNumber)[0]
-                    print(estadiaFinal)
+                    service.createAnonymousStayOUT(moveSaved, estadiaFinal)
+                    #poner en ocupado en False
+            
                     NotificationEgress.objects.create(userName='userName',photoPath=moveSaved.pathPhoto,
                     place= moveSaved.placeNumber, isOk = False, isSuspected = True, estadia=estadiaFinal)
                 else:

@@ -1,6 +1,6 @@
 from ..models import Estadia, Segment
 from ..responses import EstadiaResponse, SegmentResponse
-from ..models import MoveCamera, Estadia
+from ..models import MoveCamera, Estadia, Place
 import time
 
 
@@ -40,8 +40,24 @@ class EstadiaService():
                                photoPath=arrivalMove.pathPhoto, 
                                estadia=anonimo)
         
+        #buscar el lugar asociado y ponerlo en False, va a romper!! filtrar con placeNumber
+        place= Place.objects.filter(placeNumber= anonimo.placeUsed)[0]
+        place.occupied= True
+        place.save()
         print('Estadia anonima creada')
     
+    #solo el sgmento de salida (la estadia ya está creada)
+    def createAnonymousStayOUT(self, arrivalMove, estadia):
+        Segment.objects.create(segmentType='SALIDA', 
+                               photoPath=arrivalMove.pathPhoto, 
+                               estadia=estadia)
+        
+        #buscar el lugar asociado y ponerlo en False, va a romper!! filtrar con placeNumber
+        place= Place.objects.filter(placeNumber= estadia.placeUsed)[0]
+        place.occupied= False
+        place.save()
+        print('Estadia anonima cerrada')
+
     
     def updateAnonymousCase(self):
         exitMoves = MoveCamera.objects.filter(occupied=False, registered=False)
