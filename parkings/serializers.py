@@ -10,7 +10,7 @@ from .models.user import User, BikeOwner
 class MovesSerializer(serializers.ModelSerializer):
     class Meta:
         model = MoveCamera
-        fields = ("placeNumber", "occupied", "pathPhoto", "hourGenerated")
+        fields = ("placeNumber", "occupied", "pathPhoto", "createDate")
 
 class BicycleParkingSerializer(serializers.ModelSerializer):
     class Meta:

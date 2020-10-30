@@ -6,16 +6,54 @@ import time
 
 class EstadiaService():
 
+    def findAll(self):
+        items = Estadia.objects.all()
+        return self.parseEstadias(items)
+    
+    
     def findByUser(self, userName):
         estadias = Estadia.objects.filter(userName=userName)
         return estadias
 
 
     def findByRangeDate(self, fromDate, toDate):
-        responses = []
         estadias = Estadia.objects.filter(dateCreated__lte=toDate, dateCreated__gte=fromDate)
+        return self.parseEstadias(estadias)
 
-        for est in estadias:
+
+    def findAnonymous(self):
+        fromDate='init date'
+        toDate='final date'
+        
+        estadias = Estadia.objects.filter(dateCreated__lte=toDate, 
+                                          dateCreated__gte=fromDate,
+                                          isAnonymous=True)
+        return estadias
+
+
+    def createAnonymousStay(self, arrivalMove):
+        anonimo = Estadia.objects.create(placeUsed=arrivalMove.placeNumber, 
+                                         userEmail='Anonimo',
+                                         isAnonymous=True)
+        
+        Segment.objects.create(segmentType='LLEGADA', 
+                               photoPath=arrivalMove.pathPhoto, 
+                               estadia=anonimo)
+        
+        print('Estadia anonima creada')
+    
+    
+    def updateAnonymousCase(self):
+        exitMoves = MoveCamera.objects.filter(occupied=False, registered=False)
+        
+        for move in exitMoves:
+            estadia = Estadia.objects.get(placeUsed=move.placeNumber, userEmail='Anonimo')
+    
+            
+    def parseEstadias(self, modelEstadias):
+        responses = []
+        
+        for est in modelEstadias:
             segments = Segment.objects.filter(estadia=est)
             arrival = {}
             departure = {}
@@ -32,52 +70,13 @@ class EstadiaService():
                     }
 
             e = {
-                'userName': 'Test', 
+                'userName': 'Test '+str(est.placeUsed), 
                 'arrival': arrival, 
                 'departure': departure,
                 'placeUsed': est.placeUsed,
                 'dateCreated': est.dateCreated
             }
+            
             responses.append(e)
     
         return responses
-
-
-    def findAnonymous(self):
-        fromDate='init date'
-        toDate='final date'
-        
-        estadias = Estadia.objects.filter(dateCreated__lte=toDate, 
-                                          dateCreated__gte=fromDate,
-                                          isAnonymous=True)
-        return estadias
-
-
-    def createAnonymousCase(self):
-        tolerancia = 5
-        arrivalMoves= MoveCamera.objects.filter(occupied=True, registered=False)
-
-        for move in arrivalMoves:
-            now = time.time()
-            difference = int(now - move.createDate)
-
-            if(difference >= tolerancia):
-                anonimo = Estadia.objects.create(placeUsed=move.placeNumber, 
-                                                 userEmail='Anonimo',
-                                                 isAnonymous=True)
-                
-                Segment.objects.create(typeSegment='LLEGADA', 
-                                       photoPath=move.pathPhoto, 
-                                       estadia=anonimo)
-                #move.registered = True
-                #move.save()
-                print('crear estadia anonima')
-            else:
-                print('no paso el tiempo de tolerancia')
-    
-    
-    def updateAnonymousCase(self):
-        exitMoves = MoveCamera.objects.filter(occupied=False, registered=False)
-        
-        for move in exitMoves:
-            estadia = Estadia.objects.get(placeUsed=move.placeNumber, userEmail='Anonimo')

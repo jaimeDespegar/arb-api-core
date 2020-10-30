@@ -5,6 +5,8 @@ from rest_framework.response import Response
 from ..serializers import MovesSerializer
 import time
 from ..models import MoveCamera, NotificationEgress
+from ..services import EstadiaService
+
 
 class MoveCameraView():
 
@@ -12,10 +14,16 @@ class MoveCameraView():
     def moveCreate(request):
         data = request.data['registers']
         responseData = []
+        service = EstadiaService()
         for register in data:
             serializer = MovesSerializer(data=register)
             if serializer.is_valid():
-                serializer.save()
+                moveSaved = serializer.save()
+                if (not moveSaved.occupied):
+                    service.createAnonymousStay(moveSaved)
+                    print("estadia anonima, ingreso")
+                else:
+                    print("es egreso no se creo nada")
                 responseData.append(serializer.data)
                 if (register.occupied == False):
                     NotificationEgress.objects.create(userName='userName',photoPath=register.pathPhoto,
@@ -25,21 +33,21 @@ class MoveCameraView():
 
         return Response(responseData, status=status.HTTP_201_CREATED)
 
-    
-    # def checkSuspectedMove():
-    #     tolerancia= 5 #segundos
-    #     exitMoves= MoveCamera.objects.filter(occupied=False,registered=False)#busco en la tabla
 
-    #     for move in exitMoves:
-    #         notification = Notification.objects.get(placeNumber= move.placeNumber)
+    def checkSuspectedMove():
+        tolerancia= 5 #segundos
+        exitMoves= MoveCamera.objects.filter(occupied=False,registered=False)#busco en la tabla
+
+        for move in exitMoves:
+            notification = Notification.objects.get(placeNumber= move.placeNumber)
             
-    #         isNotAlarmActive = (notification == None) #boolean , None=null
+            isNotAlarmActive = (notification == None) #boolean , None=null
 
-    #         now = time.time()
-    #         diferencia= int(now - move.createDate)
-    #         if(diferencia>=tolerancia and (isNotAlarmActive)):
-    #             Notification.objects.create(userName='userName',photoPath=move.pathPhoto, place= move.placeNumber)
-    #             print("ALARMA!")
+            now = time.time()
+            diferencia= int(now - move.createDate)
+            if(diferencia>=tolerancia and (isNotAlarmActive)):
+                Notification.objects.create(userName='userName',photoPath=move.pathPhoto, place= move.placeNumber)
+                print("ALARMA!")
 
 
     #@api_view(['GET', 'POST', 'PUT'])
