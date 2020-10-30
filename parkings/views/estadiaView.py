@@ -72,8 +72,28 @@ class EstadiaView():
     
     
     @api_view(['GET'])
-    def findEstadias(request, fromDate, toDate):
-        print('from ' + fromDate + ' , to ' + toDate)
+    def findEstadias(request):        
         service = EstadiaService()
-        result = service.findByRangeDate(fromDate, toDate)
+        
+        toDate = request.query_params.get('toDate', None)
+        fromDate = request.query_params.get('fromDate', None)
+        userName = request.query_params.get('userEmail', None)
+        isAnonymous = request.query_params.get('isAnonymous', None)
+        
+        filters = {}
+        
+        if (fromDate is not None):
+            filters['dateCreated__gte'] = fromDate
+            
+        if (toDate is not None):
+            filters['dateCreated__lte'] = toDate
+        
+        if (userName is not None):
+            filters['userEmail__exact'] = userName  
+        
+        if (isAnonymous is not None):
+            filters['isAnonymous'] = isAnonymous
+                    
+        result = service.findByFilters(filters)
         return Response(result)
+    

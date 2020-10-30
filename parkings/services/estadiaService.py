@@ -9,15 +9,10 @@ class EstadiaService():
     def findAll(self):
         items = Estadia.objects.all()
         return self.parseEstadias(items)
+        
     
-    
-    def findByUser(self, userName):
-        estadias = Estadia.objects.filter(userName=userName)
-        return estadias
-
-
-    def findByRangeDate(self, fromDate, toDate):
-        estadias = Estadia.objects.filter(dateCreated__lte=toDate, dateCreated__gte=fromDate)
+    def findByFilters(self, filters):
+        estadias = Estadia.objects.filter(**filters)
         return self.parseEstadias(estadias)
 
 
