@@ -12,7 +12,8 @@ urlpatterns = [
     path('bicycleParkingAndPlaces/', BicycleParkingView.bicycleParkingAndPlacesGetAll, name="bicycleParkingAndPlaces"),
 
     # Estadia
-    path('estadias/', EstadiaView.getAll),
+    path('estadias-getAll/', EstadiaView.getAll, name="estadias-getAll"),
+    path('estadias-get/<int:pk>/', EstadiaView.get, name="estadias-get"),
     #path('estadia-detail/<str:user>/', EstadiaView.estadiaDetail, name="estadia-detail"),
     path('estadia-create/', EstadiaView.estadiaCreate, name="estadia-create"),
     path('estadia-update/<int:pk>/', EstadiaView.estadiaUpdate, name="estadia-update"),
