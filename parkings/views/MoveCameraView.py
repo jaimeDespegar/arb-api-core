@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from rest_framework.response import Response
 from ..serializers import MovesSerializer
 import time
-from ..models import MoveCamera, Notification
+from ..models import MoveCamera, NotificationEgress
 
 class MoveCameraView():
 
@@ -17,26 +17,29 @@ class MoveCameraView():
             if serializer.is_valid():
                 serializer.save()
                 responseData.append(serializer.data)
+                if (register.occupied == False):
+                    NotificationEgress.objects.create(userName='userName',photoPath=register.pathPhoto,
+                    place= register.placeNumber, isOk = False, isSuspected = True, estadia=1)
             else:
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         return Response(responseData, status=status.HTTP_201_CREATED)
 
+    
+    # def checkSuspectedMove():
+    #     tolerancia= 5 #segundos
+    #     exitMoves= MoveCamera.objects.filter(occupied=False,registered=False)#busco en la tabla
 
-    def checkSuspectedMove():
-        tolerancia= 5 #segundos
-        exitMoves= MoveCamera.objects.filter(occupied=False,registered=False)#busco en la tabla
-
-        for move in exitMoves:
-            notification = Notification.objects.get(placeNumber= move.placeNumber)
+    #     for move in exitMoves:
+    #         notification = Notification.objects.get(placeNumber= move.placeNumber)
             
-            isNotAlarmActive = (notification == None) #boolean , None=null
+    #         isNotAlarmActive = (notification == None) #boolean , None=null
 
-            now = time.time()
-            diferencia= int(now - move.createDate)
-            if(diferencia>=tolerancia and (isNotAlarmActive)):
-                Notification.objects.create(userName='userName',photoPath=move.pathPhoto, place= move.placeNumber)
-                print("ALARMA!")
+    #         now = time.time()
+    #         diferencia= int(now - move.createDate)
+    #         if(diferencia>=tolerancia and (isNotAlarmActive)):
+    #             Notification.objects.create(userName='userName',photoPath=move.pathPhoto, place= move.placeNumber)
+    #             print("ALARMA!")
 
 
     #@api_view(['GET', 'POST', 'PUT'])

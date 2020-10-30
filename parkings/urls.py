@@ -20,7 +20,7 @@ urlpatterns = [
     path('estadia/find/<str:fromDate>/<str:toDate>', EstadiaView.findEstadias, name="estadia-find"),    
     
     # Casos sospechosos de robo
-    path('move-suspected-create/', MoveCameraView.checkSuspectedMove, name="move-suspected-create"),
+    ##path('move-suspected-create/', MoveCameraView.checkSuspectedMove, name="move-suspected-create"),
     path('move-notification-create/', NotificationView.notificationMoveCreate, name="move-notification-create"),
     path('move-notification-get/<int:pk>/', NotificationView.notificationGet, name="move-notification-get"),
 
