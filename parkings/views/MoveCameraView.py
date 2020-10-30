@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from rest_framework.response import Response
 from ..serializers import MovesSerializer
 import time
-from ..models import MoveCamera, NotificationEgress
+from ..models import MoveCamera, NotificationEgress, Estadia
 from ..services import EstadiaService
 
 
@@ -19,13 +19,16 @@ class MoveCameraView():
             serializer = MovesSerializer(data=register)
             if serializer.is_valid():
                 moveSaved = serializer.save()
-                if (moveSaved.occupied):
+                if (moveSaved.occupied): #Debería ser al revés!! ver en camera detection!
+                    print("es egreso no se creo nada")
+                    
+                    estadiaFinal = Estadia.objects.filter(placeUsed= moveSaved.placeNumber)[0]
+                    print(estadiaFinal)
+                    NotificationEgress.objects.create(userName='userName',photoPath=moveSaved.pathPhoto,
+                    place= moveSaved.placeNumber, isOk = False, isSuspected = True, estadia=estadiaFinal)
+                else:
                     service.createAnonymousStay(moveSaved)
                     print("estadia anonima, ingreso")
-                else:
-                    print("es egreso no se creo nada")
-                    NotificationEgress.objects.create(userName='userName',photoPath=register.pathPhoto,
-                    place= register.placeNumber, isOk = False, isSuspected = True, estadia=1)
                     
                 responseData.append(serializer.data)
                 
@@ -36,20 +39,20 @@ class MoveCameraView():
         return Response(responseData, status=status.HTTP_201_CREATED)
 
 
-    def checkSuspectedMove():
-        tolerancia= 5 #segundos
-        exitMoves= MoveCamera.objects.filter(occupied=False,registered=False)#busco en la tabla
+    # def checkSuspectedMove():
+    #     tolerancia= 5 #segundos
+    #     exitMoves= MoveCamera.objects.filter(occupied=False,registered=False)#busco en la tabla
 
-        for move in exitMoves:
-            notification = Notification.objects.get(placeNumber= move.placeNumber)
+    #     for move in exitMoves:
+    #         notification = Notification.objects.get(placeNumber= move.placeNumber)
             
-            isNotAlarmActive = (notification == None) #boolean , None=null
+    #         isNotAlarmActive = (notification == None) #boolean , None=null
 
-            now = time.time()
-            diferencia= int(now - move.createDate)
-            if(diferencia>=tolerancia and (isNotAlarmActive)):
-                Notification.objects.create(userName='userName',photoPath=move.pathPhoto, place= move.placeNumber)
-                print("ALARMA!")
+    #         now = time.time()
+    #         diferencia= int(now - move.createDate)
+    #         if(diferencia>=tolerancia and (isNotAlarmActive)):
+    #             Notification.objects.create(userName='userName',photoPath=move.pathPhoto, place= move.placeNumber)
+    #             print("ALARMA!")
 
 
     #@api_view(['GET', 'POST', 'PUT'])
