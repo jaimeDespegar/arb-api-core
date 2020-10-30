@@ -13,9 +13,8 @@ class EstadiaView():
 
     @api_view(['GET'])
     def getAll(request):
-        tasks = Estadia.objects.all()
-        serializer = EstadiaSerializer(tasks, many=True)
-        return Response(serializer.data)
+        service = EstadiaService()
+        return Response(service.findAll())
 
 
     @api_view(['POST'])

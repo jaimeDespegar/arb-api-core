@@ -5,6 +5,8 @@ from rest_framework.response import Response
 from ..serializers import MovesSerializer
 import time
 from ..models import MoveCamera, Notification
+from ..services import EstadiaService
+
 
 class MoveCameraView():
 
@@ -12,10 +14,16 @@ class MoveCameraView():
     def moveCreate(request):
         data = request.data['registers']
         responseData = []
+        service = EstadiaService()
         for register in data:
             serializer = MovesSerializer(data=register)
             if serializer.is_valid():
-                serializer.save()
+                moveSaved = serializer.save()
+                if (not moveSaved.occupied):
+                    service.createAnonymousStay(moveSaved)
+                    print("estadia anonima, ingreso")
+                else:
+                    print("es egreso no se creo nada")
                 responseData.append(serializer.data)
             else:
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
