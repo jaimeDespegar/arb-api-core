@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import MoveCameraView, BicycleParkingView, EstadiaView, NotificationView, RegisterUserView
+from .views import MoveCameraView, BicycleParkingView, EstadiaView, NotificationView, RegisterUserView, NotificationEgressView
 
 urlpatterns = [
     path('move-create/', MoveCameraView.moveCreate, name="move-create"),
@@ -34,7 +34,10 @@ urlpatterns = [
     path('bikeOwner-get/<int:pk>/', RegisterUserView.registerBikeOwnerGet, name="bikeOwner-get"),
     path('bikeOwner-update/<int:pk>/', RegisterUserView.registerBikeOwnerUpdate, name="bikeOwner-update"),
 
-
+    ## Alertas
+    path('notificationEgress-get/<int:pk>/', NotificationEgressView.notificationEgressGet, name="notificationEgress-get"),
+    path('notificationEgress-getAll/', NotificationEgressView.notificationEgressGetAll, name="notificationEgress-getAll"),
+    path('notificationEgress-update/<int:pk>/', NotificationEgressView.notificationEgressUpdate, name="notificationEgress-update"),
 
     # path('parkings/<int:pk>/', MoveCameraView.parking_detail),
     # path('configuration/', ConfigurationView.configuration_list),
