@@ -65,11 +65,13 @@ class EstadiaService():
                     }
 
             e = {
+                'id': est.id,
                 'userName': 'Test '+str(est.placeUsed), 
                 'arrival': arrival, 
                 'departure': departure,
                 'placeUsed': est.placeUsed,
-                'dateCreated': est.dateCreated
+                'dateCreated': est.dateCreated,
+                'isAnonymous': est.isAnonymous
             }
             
             responses.append(e)
