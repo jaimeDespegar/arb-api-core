@@ -23,7 +23,9 @@ class MoveCameraView():
                     print("es egreso no se creo nada")
                     
                     estadiaFinal = Estadia.objects.filter(placeUsed= moveSaved.placeNumber)[0]
-                    print(estadiaFinal)
+                    service.createAnonymousStayOUT(moveSaved, estadiaFinal)
+                    #poner en ocupado en False
+            
                     NotificationEgress.objects.create(userName='userName',photoPath=moveSaved.pathPhoto,
                     place= moveSaved.placeNumber, isOk = False, isSuspected = True, estadia=estadiaFinal)
                 else:
@@ -38,21 +40,6 @@ class MoveCameraView():
 
         return Response(responseData, status=status.HTTP_201_CREATED)
 
-
-    # def checkSuspectedMove():
-    #     tolerancia= 5 #segundos
-    #     exitMoves= MoveCamera.objects.filter(occupied=False,registered=False)#busco en la tabla
-
-    #     for move in exitMoves:
-    #         notification = Notification.objects.get(placeNumber= move.placeNumber)
-            
-    #         isNotAlarmActive = (notification == None) #boolean , None=null
-
-    #         now = time.time()
-    #         diferencia= int(now - move.createDate)
-    #         if(diferencia>=tolerancia and (isNotAlarmActive)):
-    #             Notification.objects.create(userName='userName',photoPath=move.pathPhoto, place= move.placeNumber)
-    #             print("ALARMA!")
 
 
     #@api_view(['GET', 'POST', 'PUT'])

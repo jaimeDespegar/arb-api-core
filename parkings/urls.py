@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import MoveCameraView, BicycleParkingView, EstadiaView, NotificationView
+from .views import MoveCameraView, BicycleParkingView, EstadiaView, NotificationView, RegisterUserView, NotificationEgressView
 from .views import RegisterUserView, CreateUserAPIView, LogoutUserAPIView
 from rest_framework.authtoken.views import obtain_auth_token
 
@@ -37,6 +37,11 @@ urlpatterns = [
     path('bikeOwner-get/<int:pk>/', RegisterUserView.registerBikeOwnerGet, name="bikeOwner-get"),
     path('bikeOwner-update/<int:pk>/', RegisterUserView.registerBikeOwnerUpdate, name="bikeOwner-update"),
 
+    ## Alertas
+    path('notificationEgress-get/<int:pk>/', NotificationEgressView.notificationEgressGet, name="notificationEgress-get"),
+    path('notificationEgress-getAll/', NotificationEgressView.notificationEgressGetAll, name="notificationEgress-getAll"),
+    path('notificationEgress-update/<int:pk>/', NotificationEgressView.notificationEgressUpdate, name="notificationEgress-update"),
+    path('notificationEgress-getSuspected/', NotificationEgressView.notificationEgressHistorySuspectedGet, name="notificationEgress-getSuspected"),
 
     path('auth/login/', obtain_auth_token, name='auth_user_login'),
     path('auth/register/', CreateUserAPIView.as_view(), name='auth_user_create'),
