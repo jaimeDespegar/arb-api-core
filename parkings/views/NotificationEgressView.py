@@ -20,6 +20,12 @@ class NotificationEgressView():
         serializer = NotificationEgressSerializer(tasks, many=True)
         return Response(serializer.data)
 
+    # histarial de robos 
+    @api_view(['GET'])
+    def notificationEgressHistorySuspectedGet(request):
+        tasks= NotificationEgress.objects.filter(isSuspected= "True")
+        serializer = NotificationEgressSerializer(tasks, many=True)
+        return Response(serializer.data)
 
     @api_view(['PUT'])
     def notificationEgressUpdate(request, pk):

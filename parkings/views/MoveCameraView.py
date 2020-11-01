@@ -41,21 +41,6 @@ class MoveCameraView():
         return Response(responseData, status=status.HTTP_201_CREATED)
 
 
-    # def checkSuspectedMove():
-    #     tolerancia= 5 #segundos
-    #     exitMoves= MoveCamera.objects.filter(occupied=False,registered=False)#busco en la tabla
-
-    #     for move in exitMoves:
-    #         notification = Notification.objects.get(placeNumber= move.placeNumber)
-            
-    #         isNotAlarmActive = (notification == None) #boolean , None=null
-
-    #         now = time.time()
-    #         diferencia= int(now - move.createDate)
-    #         if(diferencia>=tolerancia and (isNotAlarmActive)):
-    #             Notification.objects.create(userName='userName',photoPath=move.pathPhoto, place= move.placeNumber)
-    #             print("ALARMA!")
-
 
     #@api_view(['GET', 'POST', 'PUT'])
     #def parkings_list(request):

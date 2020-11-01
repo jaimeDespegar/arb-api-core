@@ -38,6 +38,7 @@ urlpatterns = [
     path('notificationEgress-get/<int:pk>/', NotificationEgressView.notificationEgressGet, name="notificationEgress-get"),
     path('notificationEgress-getAll/', NotificationEgressView.notificationEgressGetAll, name="notificationEgress-getAll"),
     path('notificationEgress-update/<int:pk>/', NotificationEgressView.notificationEgressUpdate, name="notificationEgress-update"),
+    path('notificationEgress-getSuspected/', NotificationEgressView.notificationEgressHistorySuspectedGet, name="notificationEgress-getSuspected"),
 
     # path('parkings/<int:pk>/', MoveCameraView.parking_detail),
     # path('configuration/', ConfigurationView.configuration_list),
