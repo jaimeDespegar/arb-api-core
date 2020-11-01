@@ -23,6 +23,13 @@ class EstadiaView():
         serializer = EstadiaSerializer(tasks, many=False)
         return Response(serializer.data)
 
+    @api_view(['GET'])
+    def getUser(request, pk):
+        tasks = Estadia.objects.get(userName=pk)
+        serializer = EstadiaSerializer(tasks, many=False)
+        return Response(serializer.data)
+    
+
     @api_view(['POST'])
     def estadiaCreate(request):
         estadia = request.data
@@ -70,6 +77,7 @@ class EstadiaView():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.data)
     
+    ##localhost:8000/api/estadias?userName=pepe&isAnonymous=True
     
     @api_view(['GET'])
     def findEstadias(request):        
@@ -77,7 +85,7 @@ class EstadiaView():
         
         toDate = request.query_params.get('toDate', None)
         fromDate = request.query_params.get('fromDate', None)
-        userName = request.query_params.get('userEmail', None)
+        userName = request.query_params.get('userName', None)
         isAnonymous = request.query_params.get('isAnonymous', None)
         
         filters = {}
@@ -89,7 +97,7 @@ class EstadiaView():
             filters['dateCreated__lte'] = toDate
         
         if (userName is not None):
-            filters['userEmail__exact'] = userName  
+            filters['userName__exact'] = userName  
         
         if (isAnonymous is not None):
             filters['isAnonymous'] = isAnonymous

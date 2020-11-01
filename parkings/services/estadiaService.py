@@ -28,7 +28,7 @@ class EstadiaService():
 
     def createAnonymousStay(self, arrivalMove):
         anonimo = Estadia.objects.create(placeUsed=arrivalMove.placeNumber, 
-                                         userEmail='Anonimo',
+                                         userName='Anonimo',
                                          isAnonymous=True)
         
         Segment.objects.create(segmentType='LLEGADA', 
@@ -58,7 +58,7 @@ class EstadiaService():
         exitMoves = MoveCamera.objects.filter(occupied=False, registered=False)
         
         for move in exitMoves:
-            estadia = Estadia.objects.get(placeUsed=move.placeNumber, userEmail='Anonimo')
+            estadia = Estadia.objects.get(placeUsed=move.placeNumber, userName='Anonimo')
     
             
     def parseEstadias(self, modelEstadias):
@@ -82,7 +82,7 @@ class EstadiaService():
 
             e = {
                 'id': est.id,
-                'userName': 'Test '+str(est.placeUsed), 
+                'userName': 'Test_'+str(est.placeUsed), 
                 'arrival': arrival, 
                 'departure': departure,
                 'placeUsed': est.placeUsed,

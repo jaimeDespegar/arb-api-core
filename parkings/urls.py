@@ -17,6 +17,7 @@ urlpatterns = [
     # Estadia
     path('estadias-getAll/', EstadiaView.getAll, name="estadias-getAll"),
     path('estadias-get/<int:pk>/', EstadiaView.get, name="estadias-get"),
+    path('estadias-getUser/<str:pk>/', EstadiaView.getUser, name="estadias-getUser"),
     #path('estadia-detail/<str:user>/', EstadiaView.estadiaDetail, name="estadia-detail"),
     path('estadia-create/', EstadiaView.estadiaCreate, name="estadia-create"),
     path('estadia-update/<int:pk>/', EstadiaView.estadiaUpdate, name="estadia-update"),
@@ -35,14 +36,17 @@ urlpatterns = [
     path('bikeOwner-create/', RegisterUserView.registerBikeOwnerCreate, name="bikeOwner-create"),
     path('bikeOwner-getAll/', RegisterUserView.registerBikeOwnerGetAll, name="bikeOwner-getAll"),
     path('bikeOwner-get/<int:pk>/', RegisterUserView.registerBikeOwnerGet, name="bikeOwner-get"),
+    path('bikeOwner-getUser/<str:pk>/', RegisterUserView.registerBikeOwnerGetUser, name="bikeOwner-getUser"),
     path('bikeOwner-update/<int:pk>/', RegisterUserView.registerBikeOwnerUpdate, name="bikeOwner-update"),
+    path('bikeOwner-updateUser/<str:pk>/', RegisterUserView.registerBikeOwnerUpdateUser, name="bikeOwner-updateUser"),
 
     ## Alertas
     path('notificationEgress-get/<int:pk>/', NotificationEgressView.notificationEgressGet, name="notificationEgress-get"),
+    path('notificationEgress-getUser/<str:pk>/', NotificationEgressView.notificationEgressGetUser, name="notificationEgress-getUser"),
     path('notificationEgress-getAll/', NotificationEgressView.notificationEgressGetAll, name="notificationEgress-getAll"),
     path('notificationEgress-update/<int:pk>/', NotificationEgressView.notificationEgressUpdate, name="notificationEgress-update"),
     path('notificationEgress-getSuspected/', NotificationEgressView.notificationEgressHistorySuspectedGet, name="notificationEgress-getSuspected"),
-
+    path('notificationEgress-updateUser/<str:pk>/', NotificationEgressView.notificationEgressUpdateUser, name="notificationEgress-updateUser"),
     path('auth/login/', obtain_auth_token, name='auth_user_login'),
     path('auth/register/', CreateUserAPIView.as_view(), name='auth_user_create'),
     path('auth/logout/', LogoutUserAPIView.as_view(), name='auth_user_logout')

@@ -13,6 +13,13 @@ class NotificationEgressView():
         serializer = NotificationEgressSerializer(tasks, many=False)
         return Response(serializer.data)
 
+    # GET trae por userName 
+    @api_view(['GET'])
+    def notificationEgressGetUser(request, pk):
+        tasks = NotificationEgress.objects.get(userName=pk)
+        serializer = NotificationEgressSerializer(tasks, many=False)
+        return Response(serializer.data)
+
    # GET trae todas (para el guardia)
     @api_view(['GET'])
     def notificationEgressGetAll(request):
@@ -30,6 +37,15 @@ class NotificationEgressView():
     @api_view(['PUT'])
     def notificationEgressUpdate(request, pk):
         notifEgress = NotificationEgress.objects.get(id=pk)
+        notifEgress.isSuspected=request.data["isSuspected"]
+        notifEgress.save()
+        ##Response({"key": item.data})
+        return Response("ok")
+
+    #Actualiza el estados de casos sospechosos buscando por nombre de usuario
+    @api_view(['PUT'])
+    def notificationEgressUpdateUser(request, pk):
+        notifEgress = NotificationEgress.objects.get(userName=pk)
         notifEgress.isSuspected=request.data["isSuspected"]
         notifEgress.save()
         ##Response({"key": item.data})

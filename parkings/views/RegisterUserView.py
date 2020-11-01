@@ -71,10 +71,32 @@ class RegisterUserView():
         serializer = BikeOwnerSerializer(tasks, many=False)
         return Response(serializer.data)
 
+    # GET trae por id 
+    @api_view(['GET'])
+    def registerBikeOwnerGetUser(request, pk):
+        tasks = BikeOwner.objects.get(userName=pk)
+        serializer = BikeOwnerSerializer(tasks, many=False)
+        return Response(serializer.data)
+
     #servicio para que el usuario modifique sus datos de reistro
     @api_view(['PUT'])
     def registerBikeOwnerUpdate(request, pk):
         parking = BikeOwner.objects.get(id=pk)
+        serializer = BikeOwnerSerializer(instance=parking, data=request.data)
+        
+        if serializer.is_valid():
+            serializer.save()
+            print("Modificación de datos de usuario exitoso")
+        else:
+            print("Error al modificar  datos de usuario")
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.data)
+    
+    
+    #servicio para que el usuario modifique sus datos de reistro
+    @api_view(['PUT'])
+    def registerBikeOwnerUpdateUser(request, pk):
+        parking = BikeOwner.objects.get(userName=pk)
         serializer = BikeOwnerSerializer(instance=parking, data=request.data)
         
         if serializer.is_valid():
