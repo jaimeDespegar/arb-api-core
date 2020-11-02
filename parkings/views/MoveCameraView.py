@@ -19,9 +19,7 @@ class MoveCameraView():
             serializer = MovesSerializer(data=register)
             if serializer.is_valid():
                 moveSaved = serializer.save()
-                if (moveSaved.occupied): #Debería ser al revés!! ver en camera detection!
-                    print("es egreso no se creo nada")
-                    
+                if (moveSaved.occupied): #Debería ser al revés!! ver en camera detection!                    
                     estadiaFinal = Estadia.objects.filter(placeUsed= moveSaved.placeNumber)[0]
                     service.createAnonymousStayOUT(moveSaved, estadiaFinal)
                     #poner en ocupado en False
@@ -30,7 +28,6 @@ class MoveCameraView():
                     place= moveSaved.placeNumber, isOk = False, isSuspected = True, estadia=estadiaFinal)
                 else:
                     service.createAnonymousStay(moveSaved)
-                    print("estadia anonima, ingreso")
                     
                 responseData.append(serializer.data)
                 
