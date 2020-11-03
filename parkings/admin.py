@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import Segment, BicycleParking, Notification, Place, Estadia, MoveCamera, NotificationEgress
-from .models import User, BikeOwner
+from .models import BikeOwner
 
 # Register your models here.
 
@@ -11,5 +11,4 @@ admin.site.register(NotificationEgress)
 admin.site.register(Place)
 admin.site.register(Estadia)
 admin.site.register(MoveCamera)
-admin.site.register(User)
 admin.site.register(BikeOwner)

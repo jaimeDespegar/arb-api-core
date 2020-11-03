@@ -1,6 +1,6 @@
 from ..models import Estadia, Segment
 from ..responses import EstadiaResponse, SegmentResponse
-from ..models import MoveCamera, Estadia, Place
+from ..models import MoveCamera, Estadia, Place, NotificationEgress
 import time
 
 
@@ -12,13 +12,15 @@ class EstadiaService():
         
     
     def findByFilters(self, filters):
+        print(filters)
         estadias = Estadia.objects.filter(**filters)
+        print(len(estadias))
         return self.parseEstadias(estadias)
 
 
-    def findAnonymous(self):
-        fromDate='init date'
-        toDate='final date'
+    def findSuspect(self):
+        
+        items = NotificationEgress.objects.all()
         
         estadias = Estadia.objects.filter(dateCreated__lte=toDate, 
                                           dateCreated__gte=fromDate,
@@ -82,7 +84,7 @@ class EstadiaService():
 
             e = {
                 'id': est.id,
-                'userName': 'Test_'+str(est.placeUsed), 
+                'userName': est.userName, 
                 'arrival': arrival, 
                 'departure': departure,
                 'placeUsed': est.placeUsed,
