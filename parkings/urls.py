@@ -37,8 +37,8 @@ urlpatterns = [
     path('bikeOwner-getAll/', RegisterUserView.registerBikeOwnerGetAll, name="bikeOwner-getAll"),
     path('bikeOwner-get/<int:pk>/', RegisterUserView.registerBikeOwnerGet, name="bikeOwner-get"),
     path('bikeOwner-getUser/<str:pk>/', RegisterUserView.registerBikeOwnerGetUser, name="bikeOwner-getUser"),
-    path('bikeOwner-update/<int:pk>/', RegisterUserView.registerBikeOwnerUpdate, name="bikeOwner-update"),
-    path('bikeOwner-updateUser/<str:pk>/', RegisterUserView.registerBikeOwnerUpdateUser, name="bikeOwner-updateUser"),
+    #path('bikeOwner-update/<int:pk>/', RegisterUserView.registerBikeOwnerUpdate, name="bikeOwner-update"),
+    path('bikeOwner/update/<str:pk>/', RegisterUserView.registerBikeOwnerUpdateUser, name="bikeOwner-updateUser"),
 
     ## Alertas
     path('notificationEgress-get/<int:pk>/', NotificationEgressView.notificationEgressGet, name="notificationEgress-get"),
