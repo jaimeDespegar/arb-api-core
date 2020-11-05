@@ -3,7 +3,7 @@ from rest_framework.decorators import api_view
 from django.http import JsonResponse, HttpResponse
 from rest_framework.response import Response
 from ..serializers import SegmentSerializer, EstadiaSerializer
-from ..models import Estadia, Segment, Place
+from ..models import Estadia, Segment, Place, BicycleParking
 from ..services.validator import Validator
 from ..services import EstadiaService
 from django.core import serializers
@@ -31,6 +31,19 @@ class EstadiaView():
         print(serializer.data)
         return Response(serializer.data)
     
+    #Descripcion de cada bicicletero
+    @api_view(['GET'])
+    def getStateBike(request, pk):
+        estadia = Estadia.objects.get(userName=pk) #asumo que hay 1 estadía por persona por día        
+        places = Place.objects.filter(placeNumber = estadia.placeUsed)#asumo los lugares son únicos
+        stateBike = {
+            "description": places[0].bicycleParking.description, #descripcion del bicicletero
+            "number": places[0].bicycleParking.number, #nunero de bicicletero
+            "placeNumber": places[0].placeNumber #lugar del bicicletero
+        }
+        print(stateBike)
+        return Response(stateBike)
+
 
     @api_view(['POST'])
     def estadiaCreate(request):
