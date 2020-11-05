@@ -13,12 +13,25 @@ class NotificationEgressView():
         serializer = NotificationEgressSerializer(tasks, many=False)
         return Response(serializer.data)
 
+    # # GET trae por userName 
+    # @api_view(['GET'])
+    # def notificationEgressGetUser(request, pk):
+    #     tasks = NotificationEgress.objects.get(userName=pk)
+    #     serializer = NotificationEgressSerializer(tasks, many=False)
+    #     print("notificationEgressGetUser")
+    #     print(serializer.data)
+    #     return Response(serializer.data)
+
     # GET trae por userName 
     @api_view(['GET'])
     def notificationEgressGetUser(request, pk):
-        tasks = NotificationEgress.objects.get(userName=pk)
-        serializer = NotificationEgressSerializer(tasks, many=False)
-        return Response(serializer.data)
+        list = []
+        tasks = NotificationEgress.objects.filter(userName=pk)
+        for task in tasks:
+            serializer = NotificationEgressSerializer(task, many=False)
+            list.append(serializer.data)
+        return Response(list)
+
 
    # GET trae todas (para el guardia)
     @api_view(['GET'])

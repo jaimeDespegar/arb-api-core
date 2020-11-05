@@ -27,6 +27,8 @@ class EstadiaView():
     def getUser(request, pk):
         tasks = Estadia.objects.get(userName=pk)
         serializer = EstadiaSerializer(tasks, many=False)
+        print("getUser")
+        print(serializer.data)
         return Response(serializer.data)
     
 
