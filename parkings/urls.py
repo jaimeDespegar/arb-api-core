@@ -21,7 +21,8 @@ urlpatterns = [
     #path('estadia-detail/<str:user>/', EstadiaView.estadiaDetail, name="estadia-detail"),
     path('estadia-create/', EstadiaView.estadiaCreate, name="estadia-create"),
     path('estadia-update/<int:pk>/', EstadiaView.estadiaUpdate, name="estadia-update"),
-    path('estadia/find', EstadiaView.findEstadias, name="estadia-find"),    
+    path('estadia/find', EstadiaView.findEstadias, name="estadia-find"),   
+    path('estadia-getStateBike/<str:pk>/', EstadiaView.getStateBike, name="estadia-getStateBike"), 
     path('parking/entrance/', EstadiaView.createStayEntrance, name='parking-entrance'),
     # Casos sospechosos de robo
     ##path('move-suspected-create/', MoveCameraView.checkSuspectedMove, name="move-suspected-create"),

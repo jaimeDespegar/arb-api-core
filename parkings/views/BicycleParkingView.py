@@ -38,7 +38,6 @@ class BicycleParkingView():
         serializer = BicycleParkingSerializer(tasks, many=False)
         return Response(serializer.data)
 
-
     @api_view(['GET'])
     def bicycleParkingAvailability(request):
         freePlaces = BicycleParkingService.getCountFreePlaces()        
