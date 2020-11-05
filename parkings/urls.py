@@ -22,7 +22,7 @@ urlpatterns = [
     path('estadia-create/', EstadiaView.estadiaCreate, name="estadia-create"),
     path('estadia-update/<int:pk>/', EstadiaView.estadiaUpdate, name="estadia-update"),
     path('estadia/find', EstadiaView.findEstadias, name="estadia-find"),    
-    
+    path('parking/entrance/', EstadiaView.createStayEntrance, name='parking-entrance'),
     # Casos sospechosos de robo
     ##path('move-suspected-create/', MoveCameraView.checkSuspectedMove, name="move-suspected-create"),
     path('move-notification-create/', NotificationView.notificationMoveCreate, name="move-notification-create"),

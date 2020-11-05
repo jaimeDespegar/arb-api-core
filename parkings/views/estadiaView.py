@@ -29,7 +29,19 @@ class EstadiaView():
         serializer = EstadiaSerializer(tasks, many=False)
         return Response(serializer.data)
     
-
+    
+    @api_view(['POST'])
+    def createStayEntrance(request):
+        data = request.data
+        print(data)
+        service = EstadiaService()
+        
+        if (service.registerEntrance(data)):
+            return Response("OK", status=status.HTTP_201_CREATED)                    
+        else:
+            return Response("Error al vincular entrada", status=status.HTTP_400_BAD_REQUEST)
+    
+    
     @api_view(['POST'])
     def estadiaCreate(request):
         estadia = request.data

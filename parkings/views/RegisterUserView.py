@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from django.http import JsonResponse
 from rest_framework.response import Response
-from ..serializers import UserSerializer, BikeOwnerSerializer
+from ..serializers import UserSerializer, BikeOwnerSerializer, CreateUserSerializer
 from ..models.user import BikeOwner
 from django.contrib.auth.models import User
 
@@ -56,6 +56,7 @@ class RegisterUserView():
     #servicio para que el usuario modifique sus datos de reistro
     @api_view(['PUT'])
     def registerBikeOwnerUpdateUser(request, pk):
+
         userEdited = request.data
 
         user = User.objects.get(username=pk)

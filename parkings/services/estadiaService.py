@@ -62,7 +62,23 @@ class EstadiaService():
         for move in exitMoves:
             estadia = Estadia.objects.get(placeUsed=move.placeNumber, userName='Anonimo')
     
-            
+    def registerEntrance(self, data):
+        try: 
+            stayCreated = Estadia.objects.get(placeUsed=data['place'])
+        except Estadia.DoesNotExist:
+            stayCreated = None
+        
+        if (stayCreated is not None and stayCreated.isAnonymous):
+            stayCreated.userName = data['userName']
+            stayCreated.isAnonymous = False
+            stayCreated.save()
+            print('Estadia registrada para el usuario ' + data['userName'])
+            return True;
+        else:
+            print('La estadia no existe o ya fue registrada por otro usuario')
+            return False;
+
+
     def parseEstadias(self, modelEstadias):
         responses = []
         
