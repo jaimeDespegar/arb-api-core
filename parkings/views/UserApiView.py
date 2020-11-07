@@ -9,6 +9,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework import status
 from rest_framework.views import APIView
 from ..serializers import CreateUserSerializer
+from ..models import BikeOwner
 import json
 # pip install demjson
 
@@ -23,10 +24,17 @@ class CreateUserAPIView(CreateAPIView):
         serializer = self.get_serializer(data=newUser)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
+        
         headers = self.get_success_headers(serializer.data)
+                
+        # create bikeowner
+        BikeOwner.objects.create(bicyclePhoto=newUser['bicyclePhoto'],
+                                 profilePhoto=newUser['profilePhoto'],
+                                 user=serializer.instance)
         # We create a token than will be used for future auth
         token = Token.objects.create(user=serializer.instance)
         token_data = {"token": token.key}
+        
         return Response(
             {**serializer.data, **token_data},
             status=status.HTTP_201_CREATED,

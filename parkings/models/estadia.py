@@ -8,6 +8,7 @@ class Estadia(models.Model):
     dateCreated = models.DateTimeField(default=timezone.now)
     userName = models.CharField(max_length=50, default=None)
     isAnonymous = models.BooleanField(default=False)
+    isActive = models.BooleanField(default=True)
 
     def __str__(self):
-        return 'Estadia: Lugar  ' + str(self.placeUsed)
+        return 'Estadia: user '+ self.userName + ', lugar  ' + str(self.placeUsed) + ', activa ' + str(self.isActive)

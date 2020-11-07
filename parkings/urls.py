@@ -17,13 +17,15 @@ urlpatterns = [
     # Estadia
     path('estadias-getAll/', EstadiaView.getAll, name="estadias-getAll"),
     path('estadias-get/<int:pk>/', EstadiaView.get, name="estadias-get"),
-    path('estadias-getUser/<str:pk>/', EstadiaView.getUser, name="estadias-getUser"),
+    path('estadias', EstadiaView.find, name="estadias-find"),
     #path('estadia-detail/<str:user>/', EstadiaView.estadiaDetail, name="estadia-detail"),
     path('estadia-create/', EstadiaView.estadiaCreate, name="estadia-create"),
     path('estadia-update/<int:pk>/', EstadiaView.estadiaUpdate, name="estadia-update"),
-    path('estadia/find', EstadiaView.findEstadias, name="estadia-find"),   
+    path('estadia/find', EstadiaView.findEstadias, name="estadia-find"),   # renombrar
     path('estadia-getStateBike/<str:pk>/', EstadiaView.getStateBike, name="estadia-getStateBike"), 
     path('parking/entrance/', EstadiaView.createStayEntrance, name='parking-entrance'),
+    path('parking/egress/', EstadiaView.createStayEgress, name='parking-egress'),    
+
     # Casos sospechosos de robo
     ##path('move-suspected-create/', MoveCameraView.checkSuspectedMove, name="move-suspected-create"),
     path('move-notification-create/', NotificationView.notificationMoveCreate, name="move-notification-create"),

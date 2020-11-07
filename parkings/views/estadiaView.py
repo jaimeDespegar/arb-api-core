@@ -19,27 +19,41 @@ class EstadiaView():
     # GET trae por id 
     @api_view(['GET'])
     def get(request, pk):
+        
         tasks = Estadia.objects.get(id=pk)
         serializer = EstadiaSerializer(tasks, many=False)
         return Response(serializer.data)
 
     @api_view(['GET'])
-    def getUser(request, pk):
-        tasks = Estadia.objects.get(userName=pk)
-        serializer = EstadiaSerializer(tasks, many=False)
-        return Response(serializer.data)
-    
+    def find(request):
+             
+        userName = request.query_params.get('userName', None)
+        isActive = request.query_params.get('isActive', None)
+        filters = {}
+                
+        if (userName is not None):
+            filters['userName__exact'] = userName  
+        if (isActive is not None):
+            filters['isActive__exact'] = isActive.lower() == 'true'
+
+        try:
+            items = Estadia.objects.get(**filters)
+            serializer = EstadiaSerializer(items, many=False)
+            return Response(serializer.data)
+        except Estadia.DoesNotExist:
+            return Response({'message': 'Error Stay Not Found.'}, status=status.HTTP_404_NOT_FOUND)
+            
+
     #Descripcion de cada bicicletero
     @api_view(['GET'])
     def getStateBike(request, pk):
-        estadia = Estadia.objects.get(userName=pk) #asumo que hay 1 estadía por persona por día        
+        estadia = Estadia.objects.get(userName=pk, isActive=True) #asumo que hay 1 estadía por persona por día        
         places = Place.objects.filter(placeNumber = estadia.placeUsed)#asumo los lugares son únicos
         stateBike = {
             "description": places[0].bicycleParking.description, #descripcion del bicicletero
             "number": places[0].bicycleParking.number, #nunero de bicicletero
             "placeNumber": places[0].placeNumber #lugar del bicicletero
         }
-        print(stateBike)
         return Response(stateBike)
 
     @api_view(['POST'])
@@ -51,7 +65,19 @@ class EstadiaView():
         if (service.registerEntrance(data)):
             return Response("OK", status=status.HTTP_201_CREATED)                    
         else:
-            return Response("Error al vincular entrada", status=status.HTTP_400_BAD_REQUEST)
+            return Response("Error al vincular entrada", status=status.HTTP_404_NOT_FOUND)
+    
+    
+    @api_view(['POST'])
+    def createStayEgress(request):
+        data = request.data
+        print(data)
+        service = EstadiaService()
+        
+        if (service.registerEgress(data)):
+            return Response("OK", status=status.HTTP_200_OK)                    
+        else:
+            return Response("Error al vincular entrada", status=status.HTTP_404_NOT_FOUND)
     
     
     @api_view(['POST'])

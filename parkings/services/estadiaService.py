@@ -14,7 +14,6 @@ class EstadiaService():
     def findByFilters(self, filters):
         print(filters)
         estadias = Estadia.objects.filter(**filters)
-        print(len(estadias))
         return self.parseEstadias(estadias)
 
 
@@ -76,6 +75,22 @@ class EstadiaService():
             return True;
         else:
             print('La estadia no existe o ya fue registrada por otro usuario')
+            return False;
+
+
+    def registerEgress(self, data):
+        try: 
+            stayCreated = Estadia.objects.get(userName=data['userName'], isActive=True)
+        except Estadia.DoesNotExist:
+            stayCreated = None
+        
+        if (stayCreated is not None):
+            stayCreated.isActive = False
+            stayCreated.save()
+            print('Estadia terminada, usuario ' + data['userName'])
+            return True;
+        else:
+            print('No hay una estadia activa para el usuario ' + data['userName'])
             return False;
 
 
