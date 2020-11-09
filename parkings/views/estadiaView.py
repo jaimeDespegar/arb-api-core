@@ -130,7 +130,7 @@ class EstadiaView():
     ##localhost:8000/api/estadias?userName=pepe&isAnonymous=True
     
     @api_view(['GET'])
-    def findEstadias(request):        
+    def findEstadias(request):
         service = EstadiaService()
         
         toDate = request.query_params.get('toDate', None)

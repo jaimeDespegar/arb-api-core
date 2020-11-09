@@ -62,6 +62,7 @@ class EstadiaService():
             estadia = Estadia.objects.get(placeUsed=move.placeNumber, userName='Anonimo')
     
     def registerEntrance(self, data):
+        
         try: 
             stayCreated = Estadia.objects.get(placeUsed=data['place'], isActive=True)
         except Estadia.DoesNotExist:
@@ -71,6 +72,9 @@ class EstadiaService():
             stayCreated.userName = data['userName']
             stayCreated.isAnonymous = False
             stayCreated.save()
+            place = Place.objects.filter(placeNumber= stayCreated.placeUsed)[0]
+            place.occupied= True
+            place.save()
             print('Estadia registrada para el usuario ' + data['userName'])
             return True;
         else:
@@ -87,6 +91,9 @@ class EstadiaService():
         if (stayCreated is not None):
             stayCreated.isActive = False
             stayCreated.save()
+            place = Place.objects.filter(placeNumber= stayCreated.placeUsed)[0]
+            place.occupied= False
+            place.save()
             print('Estadia terminada, usuario ' + data['userName'])
             return True;
         else:
