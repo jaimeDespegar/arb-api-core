@@ -137,6 +137,7 @@ class EstadiaView():
         fromDate = request.query_params.get('fromDate', None)
         userName = request.query_params.get('userName', None)
         isAnonymous = request.query_params.get('isAnonymous', None)
+        isActive = request.query_params.get('isActive', None)
         
         filters = {}
         
@@ -151,7 +152,10 @@ class EstadiaView():
         
         if (isAnonymous is not None):
             filters['isAnonymous'] = isAnonymous
-                    
+        
+        if (isActive is not None):
+            filters['isActive__exact'] = isActive.lower() == 'true'
+                        
         result = service.findByFilters(filters)
         return Response(result)
     

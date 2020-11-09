@@ -63,7 +63,7 @@ class EstadiaService():
     
     def registerEntrance(self, data):
         try: 
-            stayCreated = Estadia.objects.get(placeUsed=data['place'])
+            stayCreated = Estadia.objects.get(placeUsed=data['place'], isActive=True)
         except Estadia.DoesNotExist:
             stayCreated = None
         
