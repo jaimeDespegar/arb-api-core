@@ -11,4 +11,4 @@ class Estadia(models.Model):
     isActive = models.BooleanField(default=True)
 
     def __str__(self):
-        return 'Estadia: user '+ self.userName + ', lugar  ' + str(self.placeUsed) + ', activa ' + str(self.isActive)
+        return 'Estadia: user '+ self.userName + ', lugar  ' + str(self.placeUsed) + ', activa ' + str(self.isActive) + ', dateCreated ' + str(self.dateCreated)
