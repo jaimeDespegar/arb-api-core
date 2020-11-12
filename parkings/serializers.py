@@ -41,7 +41,7 @@ class BikeOwnerSerializer(serializers.ModelSerializer):
     class Meta:
         model = BikeOwner
         fields = '__all__'  
-        #fields = ("name", "email","password", "bicyclePhoto", "profilePhoto")
+        #fields = ("name", "email","password", "bicyclePhoto", "profilePhoto", "pet", "street", "movie")
 
 class NotificationEgressSerializer(serializers.ModelSerializer):
     class Meta:

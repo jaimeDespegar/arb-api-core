@@ -49,7 +49,10 @@ class RegisterUserView():
             "email": user.email,
             "bicyclePhoto": owner.bicyclePhoto,
             "profilePhoto": owner.profilePhoto,
-            "password": user.password
+            "password": user.password,
+            "pet": owner.pet,
+            "street": owner.street,
+            "movie": owner.movie,
         }
         return Response(userResponse)
     
@@ -67,6 +70,9 @@ class RegisterUserView():
         
         bikeOwner.bicyclePhoto = userEdited['bicyclePhoto']
         bikeOwner.profilePhoto = userEdited['profilePhoto']
+        # bikeOwner.pet = userEdited['pet']
+        # bikeOwner.street = userEdited['street']
+        # bikeOwner.movie = userEdited['movie']
         bikeOwner.save()
                 
         return Response(userEdited, status=status.HTTP_200_OK)

@@ -158,7 +158,7 @@ class EstadiaView():
                         
         result = service.findByFilters(filters)
         return Response(result)
-    
+
     
     @api_view(['GET'])
     def getPendingsStays(request):
@@ -210,3 +210,37 @@ class EstadiaView():
         stay.save()
         pendingStay.save()        
         return Response(status=status.HTTP_200_OK)
+
+
+    @api_view(['GET'])
+    def findEstadiasReportes(request):
+        #hacre un JSON a mano
+        #buscar en estadias y separarlos en 2
+        #cantidad de estadias sospechosas (tienen notication egress y yes en isSuspected)
+        #cantidad de estadias no sospechosas (no tiene notication egress y no en isSuspected)
+        #cantidad de estadias totales
+        #hacer pruebas con los registros
+        #luego filtrar
+        service = EstadiaService()
+        cantTotal= 0
+        cantSospechosas= 0
+        cantOk= 0
+
+        totales = service.findAll()
+        cantTotal = len(totales)
+        print("cantTotal: ",cantTotal)
+
+        sospechosas= service.findSuspectEgress()
+        cantSospechosas= len(sospechosas)
+        Sospechosas=int(((cantSospechosas)/cantTotal)*100)
+        print("Sospechosas: ",Sospechosas)
+
+        Ok= int(((cantTotal - cantSospechosas)/cantTotal)*100)
+        print("Ok: ",Ok)
+
+        reportStatistics = {
+            "Sospechosas": Sospechosas, 
+            "Ok": Ok 
+        }
+        print(reportStatistics)
+        return Response(reportStatistics)

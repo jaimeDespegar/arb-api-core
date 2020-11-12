@@ -133,3 +133,9 @@ class EstadiaService():
             responses.append(e)
     
         return responses
+
+    def findSuspectEgress(self):
+        #items = NotificationEgress.objects.all()
+        
+        estadiaSuspected = NotificationEgress.objects.filter(isSuspected=True)
+        return estadiaSuspected
