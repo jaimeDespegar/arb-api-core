@@ -176,6 +176,7 @@ class EstadiaView():
         
         for i in items:
             place=i.stay.place
+            entrance = Segment.objects.get(estadia=i.stay)
             item = {
               'userName': i.userName,
               'dateCreated': i.dateCreated,
@@ -185,6 +186,10 @@ class EstadiaView():
                 'number': place.bicycleParking.number,
                 'description': place.bicycleParking.description              
               },
+              'photos': {
+                'user': '',
+                'entrance': entrance.photoPath,
+              }
             }
             response.append(item)
 
