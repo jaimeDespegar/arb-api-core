@@ -30,6 +30,9 @@ class CreateUserAPIView(CreateAPIView):
         # create bikeowner
         BikeOwner.objects.create(bicyclePhoto=newUser['bicyclePhoto'],
                                  profilePhoto=newUser['profilePhoto'],
+                                 pet=newUser['pet'],
+                                 street=newUser['street'],
+                                 movie=newUser['movie'],
                                  user=serializer.instance)
         # We create a token than will be used for future auth
         token = Token.objects.create(user=serializer.instance)
@@ -49,3 +52,4 @@ class LogoutUserAPIView(APIView):
         # simply delete the token to force a login
         request.user.auth_token.delete()
         return Response(status=status.HTTP_200_OK)
+

@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import MoveCameraView, BicycleParkingView, EstadiaView, NotificationView, RegisterUserView, NotificationEgressView
-from .views import RegisterUserView, CreateUserAPIView, LogoutUserAPIView
+from .views import RegisterUserView, CreateUserAPIView, LogoutUserAPIView, RecoveryUserView
 from rest_framework.authtoken.views import obtain_auth_token
 
 
@@ -25,6 +25,7 @@ urlpatterns = [
     path('estadia-getStateBike/<str:pk>/', EstadiaView.getStateBike, name="estadia-getStateBike"), 
     path('parking/entrance/', EstadiaView.createStayEntrance, name='parking-entrance'),
     path('parking/egress/', EstadiaView.createStayEgress, name='parking-egress'),    
+    path('estadia/reports/', EstadiaView.findEstadiasReportes, name='estadia-reports'), 
 
     # Casos sospechosos de robo
     ##path('move-suspected-create/', MoveCameraView.checkSuspectedMove, name="move-suspected-create"),
@@ -52,7 +53,10 @@ urlpatterns = [
     path('notificationEgress-updateUser/<str:pk>/', NotificationEgressView.notificationEgressUpdateUser, name="notificationEgress-updateUser"),
     path('auth/login/', obtain_auth_token, name='auth_user_login'),
     path('auth/register/', CreateUserAPIView.as_view(), name='auth_user_create'),
-    path('auth/logout/', LogoutUserAPIView.as_view(), name='auth_user_logout')
+    path('auth/logout/', LogoutUserAPIView.as_view(), name='auth_user_logout'),
+    path('bikeOwner/recovery/<str:pk>/', RecoveryUserView.recoveryBikeOwnerUpdateUser, name='bikeOwner_recovery')
+
+
     # path('parkings/<int:pk>/', MoveCameraView.parking_detail),
     # path('configuration/', ConfigurationView.configuration_list),
     # path('configuration/<str:pk>/', ConfigurationView.configuration_detail)
