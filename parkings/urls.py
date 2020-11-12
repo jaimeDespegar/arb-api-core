@@ -10,8 +10,8 @@ urlpatterns = [
     path('bicycleParking-getAll/', BicycleParkingView.bicycleParkingGetAll, name="bicycleParking-getAll"),
     path('bicycleParking-get/<int:pk>/', BicycleParkingView.bicycleParkingGet, name="bicycleParking-get"),
     path('bicycleParking-availability/', BicycleParkingView.bicycleParkingAvailability, name="bicycleParkingAvailability"),
-    path('bicycleParking-update/<int:pk>/', BicycleParkingView.bicicleParkingUpdate, name="bicycleParking-update"),
-    path('bicycleParking-delete/<int:pk>/', BicycleParkingView.bicicleParkingDelete, name="bicycleParking-delete"),
+    path('bicycleParking-update/', BicycleParkingView.bicicleParkingUpdate, name="bicycleParking-update"),
+    path('bicycleParking-delete/<int:number>/', BicycleParkingView.bicicleParkingDelete, name="bicycleParking-delete"),
     path('bicycleParkingAndPlaces/', BicycleParkingView.bicycleParkingAndPlacesGetAll, name="bicycleParkingAndPlaces"),
 
     # Estadia
@@ -25,6 +25,8 @@ urlpatterns = [
     path('estadia-getStateBike/<str:pk>/', EstadiaView.getStateBike, name="estadia-getStateBike"), 
     path('parking/entrance/', EstadiaView.createStayEntrance, name='parking-entrance'),
     path('parking/egress/', EstadiaView.createStayEgress, name='parking-egress'),    
+    path('estadia/pendings', EstadiaView.getPendingsStays, name='parking-pendings'),        
+    path('estadia/authorize', EstadiaView.authorize, name='parking-authorize'),            
 
     # Casos sospechosos de robo
     ##path('move-suspected-create/', MoveCameraView.checkSuspectedMove, name="move-suspected-create"),

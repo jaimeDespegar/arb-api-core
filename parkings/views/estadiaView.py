@@ -2,8 +2,8 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from django.http import JsonResponse, HttpResponse
 from rest_framework.response import Response
-from ..serializers import SegmentSerializer, EstadiaSerializer
-from ..models import Estadia, Segment, Place, BicycleParking
+from ..serializers import SegmentSerializer, EstadiaSerializer, PendingStaySerializer
+from ..models import Estadia, Segment, Place, BicycleParking, PendingStay
 from ..services.validator import Validator
 from ..services import EstadiaService
 from django.core import serializers
@@ -159,3 +159,54 @@ class EstadiaView():
         result = service.findByFilters(filters)
         return Response(result)
     
+    
+    @api_view(['GET'])
+    def getPendingsStays(request):
+
+        userName = request.query_params.get('userName', None)
+        
+        filters = {}
+        
+        if (userName is not None):
+            filters['userName__exact'] = userName
+
+        items = PendingStay.objects.filter(**filters)
+
+        response = []
+        
+        for i in items:
+            place=i.stay.place
+            item = {
+              'userName': i.userName,
+              'dateCreated': i.dateCreated,
+              'place': place.placeNumber,
+              'isAuthorize': i.isAuthorize,
+              'bicycleParking': {
+                'number': place.bicycleParking.number,
+                'description': place.bicycleParking.description              
+              },
+            }
+            response.append(item)
+
+        return Response(response)
+
+
+    @api_view(['POST'])    
+    def authorize(request):
+        userName = request.data['userName']
+        isAuthorize = request.data['isAuthorize']
+        
+        pendingStay = PendingStay.objects.get(userName=userName)
+        pendingStay.isAuthorize = isAuthorize
+
+        stay = pendingStay.stay
+        if (isAuthorize):
+            stay.userName = userName
+            stay.isAnonymous = False
+        else:
+            stay.userName = 'Anonimo'
+            stay.isAnonymous = True
+
+        stay.save()
+        pendingStay.save()        
+        return Response(status=status.HTTP_200_OK)

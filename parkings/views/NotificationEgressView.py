@@ -13,15 +13,6 @@ class NotificationEgressView():
         serializer = NotificationEgressSerializer(tasks, many=False)
         return Response(serializer.data)
 
-    # # GET trae por userName 
-    # @api_view(['GET'])
-    # def notificationEgressGetUser(request, pk):
-    #     tasks = NotificationEgress.objects.get(userName=pk)
-    #     serializer = NotificationEgressSerializer(tasks, many=False)
-    #     print("notificationEgressGetUser")
-    #     print(serializer.data)
-    #     return Response(serializer.data)
-
     # GET trae por userName 
     @api_view(['GET'])
     def notificationEgressGetUser(request, pk):

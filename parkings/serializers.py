@@ -1,12 +1,8 @@
 
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
-from .models import MoveCamera, BicycleParking, Estadia, Segment, Notification, NotificationEgress
+from .models import MoveCamera, BicycleParking, Estadia, Segment, Notification, NotificationEgress, PendingStay
 from .models.user import User, BikeOwner
-# class ParkingsSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Parkings
-#         fields = ("id", "tl_x", "tl_y", "br_x", "br_y", "isOccupied","patent","cameraId")
 
 
 class MovesSerializer(serializers.ModelSerializer):
@@ -68,3 +64,8 @@ class CreateUserSerializer(serializers.ModelSerializer):
         user.set_password(validated_data['password'])
         user.save()
         return user
+
+class PendingStaySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PendingStay
+        fields = '__all__'

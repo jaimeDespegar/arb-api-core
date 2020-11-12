@@ -45,8 +45,11 @@ class BicycleParkingView():
 
     #servicio para que el guardia modifique descripcion bicicletero ()
     @api_view(['PUT'])
-    def bicicleParkingUpdate(request, pk):
-        parking = BicycleParking.objects.get(id=pk)
+    def bicicleParkingUpdate(request):
+        print('request data')
+        print(request.data)
+        
+        parking = BicycleParking.objects.get(number=request.data['number'])
         serializer = BicycleParkingSerializer(instance=parking, data=request.data)
         
         if serializer.is_valid():
@@ -58,8 +61,9 @@ class BicycleParkingView():
         return Response(serializer.data)
 
     @api_view(['DELETE'])
-    def bicicleParkingDelete(request, pk):
-        parking = BicycleParking.objects.get(id=pk)
+    def bicicleParkingDelete(request, number):
+        print('request data ' + str(number))
+        parking = BicycleParking.objects.get(number=number)
         parking.delete()
         return Response("parking borrado satisfactoriamente")
 
