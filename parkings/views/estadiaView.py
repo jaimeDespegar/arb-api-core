@@ -3,10 +3,11 @@ from rest_framework.decorators import api_view
 from django.http import JsonResponse, HttpResponse
 from rest_framework.response import Response
 from ..serializers import SegmentSerializer, EstadiaSerializer, PendingStaySerializer
-from ..models import Estadia, Segment, Place, BicycleParking, PendingStay
+from ..models import Estadia, Segment, Place, BicycleParking, PendingStay, BikeOwner
 from ..services.validator import Validator
 from ..services import EstadiaService
 from django.core import serializers
+from django.contrib.auth.models import User
 import json
 
 class EstadiaView():
@@ -177,6 +178,8 @@ class EstadiaView():
         for i in items:
             place=i.stay.place
             entrance = Segment.objects.get(estadia=i.stay)
+            user = User.objects.get(username=i.userName)
+            bikeOwner = BikeOwner.objects.get(user=user)
             item = {
               'userName': i.userName,
               'dateCreated': i.dateCreated,
@@ -187,7 +190,7 @@ class EstadiaView():
                 'description': place.bicycleParking.description              
               },
               'photos': {
-                'user': '',
+                'user': bikeOwner.profilePhoto,
                 'entrance': entrance.photoPath,
               }
             }
