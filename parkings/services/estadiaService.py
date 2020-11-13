@@ -28,16 +28,17 @@ class EstadiaService():
 
 
     def createAnonymousStay(self, arrivalMove):
+        place= Place.objects.filter(placeNumber= arrivalMove.placeNumber)[0]
         anonimo = Estadia.objects.create(placeUsed=arrivalMove.placeNumber, 
                                          userName='Anonimo',
-                                         isAnonymous=True)
+                                         isAnonymous=True,
+                                         place=place)
         
         Segment.objects.create(segmentType='LLEGADA', 
                                photoPath=arrivalMove.pathPhoto, 
                                estadia=anonimo)
         
         #buscar el lugar asociado y ponerlo en False, va a romper!! filtrar con placeNumber
-        place= Place.objects.filter(placeNumber= anonimo.placeUsed)[0]
         place.occupied= True
         place.save()
         print('Estadia anonima creada')
@@ -52,6 +53,9 @@ class EstadiaService():
         place= Place.objects.filter(placeNumber= estadia.placeUsed)[0]
         place.occupied= False
         place.save()
+
+        estadia.isActive = False
+        estadia.save()
         print('Estadia anonima cerrada')
 
     
