@@ -12,7 +12,6 @@ class EstadiaService():
         
     
     def findByFilters(self, filters):
-        print(filters)
         estadias = Estadia.objects.filter(**filters)
         return self.parseEstadias(estadias)
 
@@ -142,4 +141,15 @@ class EstadiaService():
         #items = NotificationEgress.objects.all()
         
         estadiaSuspected = NotificationEgress.objects.filter(isSuspected=True)
+        return estadiaSuspected
+
+    def findSuspectEgressInOneStadia(self, estadiaAnalizar):
+        #items = NotificationEgress.objects.all()
+        print("")
+        print("findSuspectEgressInOneStadia  --inicio--")
+        print(estadiaAnalizar)
+        print("findSuspectEgressInOneStadia  --fin--")
+        #stayCreated = Estadia.objects.get(userName="admin")
+        estadiaSuspected = NotificationEgress.objects.filter(isSuspected=True)#,estadia=estadiaAnalizar
+        
         return estadiaSuspected
