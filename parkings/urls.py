@@ -27,7 +27,8 @@ urlpatterns = [
     path('parking/egress/', EstadiaView.createStayEgress, name='parking-egress'),    
     path('estadia/reports/', EstadiaView.findEstadiasReportes, name='estadia-reports'), 
     path('estadia/pendings', EstadiaView.getPendingsStays, name='parking-pendings'),        
-    path('estadia/authorize', EstadiaView.authorize, name='parking-authorize'),            
+    path('estadia/authorize', EstadiaView.authorize, name='parking-authorize'),
+    path('estadia/reportsWeek/', EstadiaView.findEstadiasReportesSemanal, name='estadia-reportsWeek'),            
 
     # Casos sospechosos de robo
     ##path('move-suspected-create/', MoveCameraView.checkSuspectedMove, name="move-suspected-create"),

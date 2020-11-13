@@ -3,11 +3,12 @@ from rest_framework.decorators import api_view
 from django.http import JsonResponse, HttpResponse
 from rest_framework.response import Response
 from ..serializers import SegmentSerializer, EstadiaSerializer, PendingStaySerializer
-from ..models import Estadia, Segment, Place, BicycleParking, PendingStay
+from ..models import Estadia, Segment, Place, BicycleParking, PendingStay, NotificationEgress
 from ..services.validator import Validator
 from ..services import EstadiaService
 from django.core import serializers
 import json
+import datetime
 
 class EstadiaView():
 
@@ -142,13 +143,13 @@ class EstadiaView():
         filters = {}
         
         if (fromDate is not None):
-            filters['dateCreated__gte'] = fromDate
+            filters['dateCreated__gte'] = fromDate #mayor e igual
             
         if (toDate is not None):
-            filters['dateCreated__lte'] = toDate
+            filters['dateCreated__lte'] = toDate #menor e igual
         
         if (userName is not None):
-            filters['userName__exact'] = userName  
+            filters['userName__exact'] = userName #igual
         
         if (isAnonymous is not None):
             filters['isAnonymous'] = isAnonymous
@@ -247,5 +248,78 @@ class EstadiaView():
             "Sospechosas": Sospechosas, 
             "Ok": Ok 
         }
+        print(reportStatistics)
+        return Response(reportStatistics)
+
+    #filtrar por dias en estadias con dateCreated
+    #para comparar fechas es como en history (web), ver en stadiaService o stadiaView
+    #buscar desde hoy hasta 1 semana atras
+    @api_view(['GET'])
+    def findEstadiasReportesSemanal(request):
+        
+        print("findEstadiasReportesSemanal")
+        service = EstadiaService()
+
+        now = datetime.datetime.utcnow()
+        #2019-03-21 11:01:04.192582
+        lastWeek = now - datetime.timedelta(days=7)
+        #2019-03-20 11:01:04.192582
+
+        listLastDaysWeek = []
+        listOk = []
+        listSospechosas = []
+
+        for i in range(7):
+            print("\n\n\n\n")
+            #busco desde el día más viejo
+            day1= 7-i
+            day2= 6-i
+            fromDate = now - datetime.timedelta(days=day1)
+            toDate = now - datetime.timedelta(days=day2)
+
+            listLastDaysWeek.append(toDate)
+
+            totales = Estadia.objects.filter(dateCreated__lte=toDate, 
+                                          dateCreated__gte=fromDate)
+            cantTotal= 0
+            cantSospechosas= 0
+            cantOk= 0
+            Sospechosas=0
+
+            cantTotal = len(totales)
+            print("cantTotalEstadiasDelDia: ",cantTotal)
+
+            for estadia in totales:
+                print(estadia)
+                sospechosa = NotificationEgress.objects.filter(isSuspected=True,estadia=estadia)
+                #if(sospechosa != None):
+                if(len(sospechosa)>=1):
+                    print("sospechosa:")
+                    print(sospechosa)
+                    cantSospechosas= cantSospechosas +1
+
+            if(cantTotal==0):
+                Sospechosas=0
+                Ok=0
+            else:
+                Sospechosas=cantSospechosas
+                Ok= cantTotal - cantSospechosas
+
+            if(cantTotal != 0):
+                if(cantSospechosas==0):
+                    Ok=cantTotal
+
+            listSospechosas.append(Sospechosas)
+            listOk.append(Ok)    
+            print("SospechosasDelDia: ",Sospechosas)
+            print("OkDelDia: ",Ok)
+
+
+        reportStatistics = {
+            "listaFechas": listLastDaysWeek,
+            "listaSospechosas": listSospechosas, 
+            "listaOk": listOk 
+        }
+        print("\n\n\n\n")
         print(reportStatistics)
         return Response(reportStatistics)
