@@ -61,5 +61,4 @@ class NotificationEgressView():
         notifEgress.save()
         service = EstadiaService()
         egressSuccess = service.registerEgress(request.data)
-        print('register egress success ' + egressSuccess)
         return Response("OK", status=status.HTTP_200_OK)
