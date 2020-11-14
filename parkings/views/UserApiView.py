@@ -18,15 +18,16 @@ class CreateUserAPIView(CreateAPIView):
     permission_classes = [AllowAny]
 
     def create(self, request, *args, **kwargs):
+        print("create!")
 
         newUser = request.data['body']
         # agregar validacion si existe el userName o email y devolver 500 con mensaje
         serializer = self.get_serializer(data=newUser)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
-        
+    
         headers = self.get_success_headers(serializer.data)
-                
+
         # create bikeowner
         BikeOwner.objects.create(bicyclePhoto=newUser['bicyclePhoto'],
                                  profilePhoto=newUser['profilePhoto'],

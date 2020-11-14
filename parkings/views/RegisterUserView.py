@@ -76,3 +76,10 @@ class RegisterUserView():
         bikeOwner.save()
                 
         return Response(userEdited, status=status.HTTP_200_OK)
+
+    @api_view(['DELETE'])
+    def bikeOwnerDelete(request, pk):
+        print('request data ' + str(pk))
+        user = User.objects.get(userName=pk)
+        user.delete()
+        return Response("user borrado satisfactoriamente")
