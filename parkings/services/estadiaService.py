@@ -11,9 +11,17 @@ class EstadiaService():
         return self.parseEstadias(items)
         
     
-    def findByFilters(self, filters):
+    def findByFilters(self, filters, isSuspected):
         estadias = Estadia.objects.filter(**filters)
-        return self.parseEstadias(estadias)
+        staysFiltered = []
+        if (isSuspected):
+            for e in estadias:
+                itemOk = len(NotificationEgress.objects.filter(estadia=e)) > 0
+                if (itemOk):
+                    staysFiltered.append(e)
+        else:
+            staysFiltered = estadias                       
+        return self.parseEstadias(staysFiltered)
 
 
     def findSuspect(self):
@@ -75,7 +83,7 @@ class EstadiaService():
             stayCreated.userName = data['userName']
             stayCreated.isAnonymous = False
             stayCreated.save()
-            place = Place.objects.filter(placeNumber= stayCreated.placeUsed)[0]
+            place = stayCreated.place
             place.occupied= True
             place.save()
             print('Estadia registrada para el usuario ' + data['userName'])
@@ -94,7 +102,7 @@ class EstadiaService():
         if (stayCreated is not None):
             stayCreated.isActive = False
             stayCreated.save()
-            place = Place.objects.filter(placeNumber= stayCreated.placeUsed)[0]
+            place = stayCreated.place
             place.occupied= False
             place.save()
             print('Estadia terminada, usuario ' + data['userName'])

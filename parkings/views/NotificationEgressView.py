@@ -4,6 +4,8 @@ from django.http import JsonResponse
 from rest_framework.response import Response
 from ..serializers import NotificationEgressSerializer
 from ..models.notificationEgress import NotificationEgress
+from ..services import EstadiaService
+
 
 class NotificationEgressView():
 
@@ -16,13 +18,17 @@ class NotificationEgressView():
     # GET trae por userName 
     @api_view(['GET'])
     def notificationEgressGetUser(request, pk):
-        list = []
-        tasks = NotificationEgress.objects.filter(userName=pk)
-        for task in tasks:
-            serializer = NotificationEgressSerializer(task, many=False)
-            list.append(serializer.data)
-        return Response(list)
 
+        try:
+            task = NotificationEgress.objects.get(userName=pk, isActive=True)
+        except NotificationEgress.DoesNotExist:
+            task = None    
+
+        if task is not None:
+            serializer = NotificationEgressSerializer(task, many=False)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response({}, status=status.HTTP_404_NOT_FOUND)
 
    # GET trae todas (para el guardia)
     @api_view(['GET'])
@@ -51,6 +57,9 @@ class NotificationEgressView():
     def notificationEgressUpdateUser(request, pk):
         notifEgress = NotificationEgress.objects.get(userName=pk)
         notifEgress.isSuspected=request.data["isSuspected"]
+        notifEgress.isActive=request.data["isActive"]
         notifEgress.save()
-        ##Response({"key": item.data})
-        return Response("ok")
+        service = EstadiaService()
+        egressSuccess = service.registerEgress(request.data)
+        print('register egress success ' + egressSuccess)
+        return Response("OK", status=status.HTTP_200_OK)

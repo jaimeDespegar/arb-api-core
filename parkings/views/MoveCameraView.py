@@ -24,7 +24,7 @@ class MoveCameraView():
                     service.createAnonymousStayOUT(moveSaved, estadiaFinal)
                     
                     NotificationEgress.objects.create(userName=estadiaFinal.userName,photoPath=moveSaved.pathPhoto,
-                    place= moveSaved.placeNumber, isOk = False, estadia=estadiaFinal)
+                    place= moveSaved.placeNumber, estadia=estadiaFinal)
                 else:
                     service.createAnonymousStay(moveSaved)
                     

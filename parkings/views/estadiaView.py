@@ -61,7 +61,6 @@ class EstadiaView():
     @api_view(['POST'])
     def createStayEntrance(request):
         data = request.data
-        print(data)
         service = EstadiaService()
         
         if (service.registerEntrance(data)):
@@ -73,7 +72,6 @@ class EstadiaView():
     @api_view(['POST'])
     def createStayEgress(request):
         data = request.data
-        print(data)
         service = EstadiaService()
         
         if (service.registerEgress(data)):
@@ -140,6 +138,7 @@ class EstadiaView():
         userName = request.query_params.get('userName', None)
         isAnonymous = request.query_params.get('isAnonymous', None)
         isActive = request.query_params.get('isActive', None)
+        isSuspected = request.query_params.get('isSuspected', None)
         
         filters = {}
         
@@ -154,11 +153,11 @@ class EstadiaView():
         
         if (isAnonymous is not None):
             filters['isAnonymous'] = isAnonymous
-        
+            
         if (isActive is not None):
             filters['isActive__exact'] = isActive.lower() == 'true'
-                        
-        result = service.findByFilters(filters)
+                 
+        result = service.findByFilters(filters, isSuspected)
         return Response(result)
 
     
@@ -178,7 +177,7 @@ class EstadiaView():
         
         for i in items:
             place=i.stay.place
-            entrance = Segment.objects.get(estadia=i.stay)
+            entrance = Segment.objects.get(estadia=i.stay, segmentType='LLEGADA')
             user = User.objects.get(username=i.userName)
             bikeOwner = BikeOwner.objects.get(user=user)
             item = {
