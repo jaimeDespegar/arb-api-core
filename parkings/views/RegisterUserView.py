@@ -62,7 +62,10 @@ class RegisterUserView():
         filters = {}
 
         if (username is not None):
-            user = User.objects.get(username=username)
+            try:
+                user = User.objects.get(username=username)
+            except User.DoesNotExist:
+                user = None 
             if (user is not None):
                 filters['user__exact'] = user
 
