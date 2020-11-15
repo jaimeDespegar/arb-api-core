@@ -55,7 +55,7 @@ class NotificationEgressView():
     #Actualiza el estados de casos sospechosos buscando por nombre de usuario
     @api_view(['PUT'])
     def notificationEgressUpdateUser(request, pk):
-        notifEgress = NotificationEgress.objects.get(userName=pk)
+        notifEgress = NotificationEgress.objects.get(userName=pk, isActive=True)
         notifEgress.isSuspected=request.data["isSuspected"]
         notifEgress.isActive=request.data["isActive"]
         notifEgress.save()
