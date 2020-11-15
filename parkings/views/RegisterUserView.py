@@ -31,6 +31,64 @@ class RegisterUserView():
         tasks = BikeOwner.objects.all()
         serializer = BikeOwnerSerializer(tasks, many=True)
         return Response(serializer.data)
+
+    # GET trae todas 
+    @api_view(['GET'])
+    def parseBikeOwnerGetAll(request):
+        owners = BikeOwner.objects.all()
+
+        listBikeOwner = []
+        
+        for owner in owners:
+            
+            userResponse = {
+            "username": owner.user.username,
+            "email": owner.user.email,
+            "bicyclePhoto": owner.bicyclePhoto,
+            "profilePhoto": owner.profilePhoto,
+            "pet": owner.pet,
+            "street": owner.street,
+            "movie": owner.movie,
+            }
+            
+            listBikeOwner.append(userResponse)
+        print(listBikeOwner)
+        return Response(listBikeOwner)
+
+    @api_view(['GET'])
+    def parseBikeOwnerFind(request):
+        username = request.query_params.get('user.username', None)#userName
+        print("usernameFind: ",username)
+        filters = {}
+
+        if (username is not None):
+            try:
+                user = User.objects.get(username=username)
+            except User.DoesNotExist:
+                user = None 
+            if (user is not None):
+                filters['user__exact'] = user
+
+        owners = BikeOwner.objects.filter(**filters)
+        print("owners: ",owners)
+
+        listBikeOwner = []
+        
+        for owner in owners:
+            
+            userResponse = {
+            "username": owner.user.username,
+            "email": owner.user.email,
+            "bicyclePhoto": owner.bicyclePhoto,
+            "profilePhoto": owner.profilePhoto,
+            "pet": owner.pet,
+            "street": owner.street,
+            "movie": owner.movie,
+            }
+            
+            listBikeOwner.append(userResponse)
+        print(listBikeOwner)
+        return Response(listBikeOwner)
     
     # GET trae por id 
     @api_view(['GET'])
@@ -45,7 +103,7 @@ class RegisterUserView():
         user = User.objects.get(username=pk)
         owner = BikeOwner.objects.get(user=user)
         userResponse = {
-            'userName': user.username,
+            'username': user.username,
             "email": user.email,
             "bicyclePhoto": owner.bicyclePhoto,
             "profilePhoto": owner.profilePhoto,
@@ -59,7 +117,8 @@ class RegisterUserView():
     #servicio para que el usuario modifique sus datos de reistro
     @api_view(['PUT'])
     def registerBikeOwnerUpdateUser(request, pk):
-
+        print("registerBikeOwnerUpdateUser")
+        print(request)
         userEdited = request.data
 
         user = User.objects.get(username=pk)
@@ -77,9 +136,10 @@ class RegisterUserView():
                 
         return Response(userEdited, status=status.HTTP_200_OK)
 
+
     @api_view(['DELETE'])
     def bikeOwnerDelete(request, pk):
         print('request data ' + str(pk))
-        user = User.objects.get(userName=pk)
+        user = User.objects.get(username=pk)
         user.delete()
         return Response("user borrado satisfactoriamente")

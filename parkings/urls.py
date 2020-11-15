@@ -47,6 +47,9 @@ urlpatterns = [
     #path('bikeOwner-update/<int:pk>/', RegisterUserView.registerBikeOwnerUpdate, name="bikeOwner-update"),
     path('bikeOwner/update/<str:pk>/', RegisterUserView.registerBikeOwnerUpdateUser, name="bikeOwner-updateUser"),
     path('bikeOwner-delete/<str:pk>/', RegisterUserView.bikeOwnerDelete, name="bikeOwner-delete"),
+    path('bikeOwnerParser-getAll/', RegisterUserView.parseBikeOwnerGetAll, name="bikeOwnerParser-getAll"),
+    path('bikeOwnerParser-Find', RegisterUserView.parseBikeOwnerFind, name="bikeOwnerParser-Find"),
+    
 
     ## Alertas
     path('notificationEgress-get/<int:pk>/', NotificationEgressView.notificationEgressGet, name="notificationEgress-get"),
