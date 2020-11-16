@@ -3,7 +3,6 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from ..serializers import SegmentSerializer, EstadiaSerializer
 from ..models import Estadia, Segment, Place, BicycleParking, BikeOwner
-from ..services.validator import Validator
 from ..services import EstadiaService
 from django.core import serializers
 from django.contrib.auth.models import User
