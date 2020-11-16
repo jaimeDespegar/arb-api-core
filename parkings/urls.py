@@ -16,7 +16,6 @@ urlpatterns = [
     # Estadia
     path('estadias-getAll/', EstadiaView.getAll, name="estadias-getAll"),
     path('estadias', EstadiaView.find, name="estadias-find"),
-    #path('estadia-update/<int:pk>/', EstadiaView.estadiaUpdate, name="estadia-update"),
     path('estadia/find', EstadiaView.findEstadias, name="estadia-find"),   # renombrar
     path('estadia-getStateBike/<str:pk>/', EstadiaView.getStateBike, name="estadia-getStateBike"), 
     path('parking/entrance/', EstadiaView.createStayEntrance, name='parking-entrance'),
@@ -31,7 +30,6 @@ urlpatterns = [
     path('bikeOwner-getAll/', RegisterUserView.registerBikeOwnerGetAll, name="bikeOwner-getAll"),
     path('bikeOwner-get/<int:pk>/', RegisterUserView.registerBikeOwnerGet, name="bikeOwner-get"),
     path('bikeOwner-getUser/<str:pk>/', RegisterUserView.registerBikeOwnerGetUser, name="bikeOwner-getUser"),
-    #path('bikeOwner-update/<int:pk>/', RegisterUserView.registerBikeOwnerUpdate, name="bikeOwner-update"),
     path('bikeOwner/update/<str:pk>/', RegisterUserView.registerBikeOwnerUpdateUser, name="bikeOwner-updateUser"),
     path('bikeOwner-delete/<str:pk>/', RegisterUserView.bikeOwnerDelete, name="bikeOwner-delete"),
     path('bikeOwnerParser-getAll/', RegisterUserView.parseBikeOwnerGetAll, name="bikeOwnerParser-getAll"),

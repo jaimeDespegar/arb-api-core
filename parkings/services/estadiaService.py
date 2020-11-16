@@ -1,5 +1,4 @@
 from ..models import Estadia, Segment
-from ..responses import EstadiaResponse, SegmentResponse
 from ..models import MoveCamera, Estadia, Place, NotificationEgress
 import time
 import datetime
