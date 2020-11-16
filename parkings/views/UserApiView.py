@@ -1,6 +1,4 @@
 
-# backend/api/views.py
-
 from django.contrib.auth import get_user_model
 from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import AllowAny
@@ -11,7 +9,6 @@ from rest_framework.views import APIView
 from ..serializers import CreateUserSerializer
 from ..models import BikeOwner
 import json
-# pip install demjson
 
 class CreateUserAPIView(CreateAPIView):
     serializer_class = CreateUserSerializer
@@ -35,7 +32,7 @@ class CreateUserAPIView(CreateAPIView):
                                  street=newUser['street'],
                                  movie=newUser['movie'],
                                  user=serializer.instance)
-        # We create a token than will be used for future auth
+        
         token = Token.objects.create(user=serializer.instance)
         token_data = {"token": token.key}
         
@@ -45,7 +42,6 @@ class CreateUserAPIView(CreateAPIView):
             headers=headers
         )
 
-
 class LogoutUserAPIView(APIView):
     queryset = get_user_model().objects.all()
 
@@ -53,4 +49,3 @@ class LogoutUserAPIView(APIView):
         # simply delete the token to force a login
         request.user.auth_token.delete()
         return Response(status=status.HTTP_200_OK)
-

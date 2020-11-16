@@ -23,7 +23,5 @@ class RecoveryUserView():
                 if(userEdited['movieJoined'] == bikeOwner.movie ):
                     user.set_password(pk)
                     user.save()
-
         
-                
         return Response(userEdited, status=status.HTTP_200_OK)
