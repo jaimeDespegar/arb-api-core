@@ -13,8 +13,7 @@ class BicycleParkingService:
         
         return freePlaces
 
-    #Descripcion de cada bicicletero
-    def getDescriptonBicycleParking():
+    def getAllBicycleParkingAndPlaces():
         parkings = BicycleParking.objects.all()
         response = []
         for p in parkings:

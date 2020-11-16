@@ -7,20 +7,16 @@ from rest_framework.authtoken.views import obtain_auth_token
 urlpatterns = [
     path('move-create/', MoveCameraView.moveCreate, name="move-create"),
     path('bicycleParking-create/', BicycleParkingView.bicycleParkingCreate, name="bicycleParking-create"),
-    path('bicycleParking-getAll/', BicycleParkingView.bicycleParkingGetAll, name="bicycleParking-getAll"),
-    path('bicycleParking-get/<int:pk>/', BicycleParkingView.bicycleParkingGet, name="bicycleParking-get"),
+    path('bicycleParking-get/<int:pk>/', BicycleParkingView.getBicycleParking, name="bicycleParking-get"),
     path('bicycleParking-availability/', BicycleParkingView.bicycleParkingAvailability, name="bicycleParkingAvailability"),
-    path('bicycleParking-update/', BicycleParkingView.bicicleParkingUpdate, name="bicycleParking-update"),
+    path('bicycleParking-update/', BicycleParkingView.updateBicicleParking, name="bicycleParking-update"),
     path('bicycleParking-delete/<int:number>/', BicycleParkingView.bicicleParkingDelete, name="bicycleParking-delete"),
-    path('bicycleParkingAndPlaces/', BicycleParkingView.bicycleParkingAndPlacesGetAll, name="bicycleParkingAndPlaces"),
+    path('bicycleParkingAndPlaces/', BicycleParkingView.getAllBicyclesParkings, name="bicycleParkingAndPlaces"),
 
     # Estadia
     path('estadias-getAll/', EstadiaView.getAll, name="estadias-getAll"),
-    path('estadias-get/<int:pk>/', EstadiaView.get, name="estadias-get"),
     path('estadias', EstadiaView.find, name="estadias-find"),
-    #path('estadia-detail/<str:user>/', EstadiaView.estadiaDetail, name="estadia-detail"),
-    path('estadia-create/', EstadiaView.estadiaCreate, name="estadia-create"),
-    path('estadia-update/<int:pk>/', EstadiaView.estadiaUpdate, name="estadia-update"),
+    #path('estadia-update/<int:pk>/', EstadiaView.estadiaUpdate, name="estadia-update"),
     path('estadia/find', EstadiaView.findEstadias, name="estadia-find"),   # renombrar
     path('estadia-getStateBike/<str:pk>/', EstadiaView.getStateBike, name="estadia-getStateBike"), 
     path('parking/entrance/', EstadiaView.createStayEntrance, name='parking-entrance'),
