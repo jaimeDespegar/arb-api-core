@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import MoveCameraView, BicycleParkingView, EstadiaView, NotificationView, RegisterUserView, NotificationEgressView
-from .views import RegisterUserView, CreateUserAPIView, LogoutUserAPIView, RecoveryUserView
+from .views import RegisterUserView, CreateUserAPIView, LogoutUserAPIView, RecoveryUserView, PendingStayView
 from rest_framework.authtoken.views import obtain_auth_token
 
 
@@ -22,8 +22,8 @@ urlpatterns = [
     path('parking/entrance/', EstadiaView.createStayEntrance, name='parking-entrance'),
     path('parking/egress/', EstadiaView.createStayEgress, name='parking-egress'),    
     path('estadia/reports/', EstadiaView.findEstadiasReportes, name='estadia-reports'), 
-    path('estadia/pendings', EstadiaView.getPendingsStays, name='parking-pendings'),        
-    path('estadia/authorize', EstadiaView.authorize, name='parking-authorize'),
+    path('estadia/pendings', PendingStayView.getPendingsStays, name='parking-pendings'),        
+    path('estadia/authorize', PendingStayView.authorize, name='parking-authorize'),
     path('estadia/reportsWeek/', EstadiaView.findEstadiasReportesSemanal, name='estadia-reportsWeek'),            
 
     # Casos sospechosos de robo
