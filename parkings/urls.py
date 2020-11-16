@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import MoveCameraView, BicycleParkingView, EstadiaView, NotificationView, RegisterUserView, NotificationEgressView
+from .views import MoveCameraView, BicycleParkingView, EstadiaView, RegisterUserView, NotificationEgressView
 from .views import RegisterUserView, CreateUserAPIView, LogoutUserAPIView, RecoveryUserView, PendingStayView
 from rest_framework.authtoken.views import obtain_auth_token
 
@@ -25,11 +25,6 @@ urlpatterns = [
     path('estadia/pendings', PendingStayView.getPendingsStays, name='parking-pendings'),        
     path('estadia/authorize', PendingStayView.authorize, name='parking-authorize'),
     path('estadia/reportsWeek/', EstadiaView.findEstadiasReportesSemanal, name='estadia-reportsWeek'),            
-
-    # Casos sospechosos de robo
-    ##path('move-suspected-create/', MoveCameraView.checkSuspectedMove, name="move-suspected-create"),
-    path('move-notification-create/', NotificationView.notificationMoveCreate, name="move-notification-create"),
-    path('move-notification-get/<int:pk>/', NotificationView.notificationGet, name="move-notification-get"),
 
     # Registros de Usuarios
     path('bikeOwner-create/', RegisterUserView.registerBikeOwnerCreate, name="bikeOwner-create"),
