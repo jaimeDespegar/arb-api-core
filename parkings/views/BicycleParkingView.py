@@ -9,7 +9,6 @@ from ..services.bicycleParkingService import BicycleParkingService
 
 class BicycleParkingView():
 
-    #Estacionar Bicicleta
     @api_view(['POST'])
     def bicycleParkingCreate(request):
         data = request.data
@@ -23,17 +22,9 @@ class BicycleParkingView():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         return Response(responseData, status=status.HTTP_201_CREATED) 
-
-    # GET trae todas (para el guardia)
-    @api_view(['GET'])
-    def bicycleParkingGetAll(request):
-        tasks = BicycleParking.objects.all()
-        serializer = BicycleParkingSerializer(tasks, many=True)
-        return Response(serializer.data)
     
-    # GET trae por id (para consultar el estadía actual)
     @api_view(['GET'])
-    def bicycleParkingGet(request, pk):
+    def getBicycleParking(request, pk):
         tasks = BicycleParking.objects.get(id=pk)
         serializer = BicycleParkingSerializer(tasks, many=False)
         return Response(serializer.data)
@@ -43,12 +34,8 @@ class BicycleParkingView():
         freePlaces = BicycleParkingService.getCountFreePlaces()        
         return Response({'freePlaces':freePlaces})
 
-    #servicio para que el guardia modifique descripcion bicicletero ()
     @api_view(['PUT'])
-    def bicicleParkingUpdate(request):
-        print('request data')
-        print(request.data)
-        
+    def updateBicicleParking(request):
         parking = BicycleParking.objects.get(number=request.data['number'])
         serializer = BicycleParkingSerializer(instance=parking, data=request.data)
         
@@ -62,13 +49,11 @@ class BicycleParkingView():
 
     @api_view(['DELETE'])
     def bicicleParkingDelete(request, number):
-        print('request data ' + str(number))
         parking = BicycleParking.objects.get(number=number)
         parking.delete()
-        return Response("parking borrado satisfactoriamente")
+        return Response("Parking borrado satisfactoriamente", status=status.HTTP_200_OK)
 
-    # GET trae todas los bicicleteros y lugares(para el guardia)
     @api_view(['GET'])
-    def bicycleParkingAndPlacesGetAll(request):
-        tasks = BicycleParkingService.getDescriptonBicycleParking()
-        return Response(tasks)
+    def getAllBicyclesParkings(request):
+        tasks = BicycleParkingService.getAllBicycleParkingAndPlaces()
+        return Response(tasks, status=status.HTTP_200_OK)

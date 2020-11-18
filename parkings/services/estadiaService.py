@@ -1,7 +1,7 @@
 from ..models import Estadia, Segment
-from ..responses import EstadiaResponse, SegmentResponse
 from ..models import MoveCamera, Estadia, Place, NotificationEgress
 import time
+import datetime
 
 
 class EstadiaService():
@@ -10,7 +10,6 @@ class EstadiaService():
         items = Estadia.objects.all()
         return self.parseEstadias(items)
         
-    
     def findByFilters(self, filters, isSuspected):
         estadias = Estadia.objects.filter(**filters)
         staysFiltered = []
@@ -25,9 +24,7 @@ class EstadiaService():
 
 
     def findSuspect(self):
-        
         items = NotificationEgress.objects.all()
-        
         estadias = Estadia.objects.filter(dateCreated__lte=toDate, 
                                           dateCreated__gte=fromDate,
                                           isAnonymous=True)
@@ -131,7 +128,7 @@ class EstadiaService():
                         'photo': segment.photoPath
                     }
 
-            e = {
+            item = {
                 'id': est.id,
                 'userName': est.userName, 
                 'arrival': arrival, 
@@ -141,23 +138,89 @@ class EstadiaService():
                 'isAnonymous': est.isAnonymous
             }
             
-            responses.append(e)
+            responses.append(item)
     
         return responses
 
-    def findSuspectEgress(self):
-        #items = NotificationEgress.objects.all()
-        
+    def findSuspectEgress(self):       
         estadiaSuspected = NotificationEgress.objects.filter(isSuspected=True)
         return estadiaSuspected
 
     def findSuspectEgressInOneStadia(self, estadiaAnalizar):
-        #items = NotificationEgress.objects.all()
-        print("")
-        print("findSuspectEgressInOneStadia  --inicio--")
-        print(estadiaAnalizar)
-        print("findSuspectEgressInOneStadia  --fin--")
-        #stayCreated = Estadia.objects.get(userName="admin")
-        estadiaSuspected = NotificationEgress.objects.filter(isSuspected=True)#,estadia=estadiaAnalizar
-        
+        estadiaSuspected = NotificationEgress.objects.filter(isSuspected=True)
         return estadiaSuspected
+    
+    def buildReportStatistics(self):
+        cantTotal= 0
+        cantSospechosas = 0
+        cantOk = 0
+
+        totales = self.findAll()
+        cantTotal = len(totales)
+
+        sospechosas = self.findSuspectEgress()
+        cantSospechosas = len(sospechosas)
+        Sospechosas = int(((cantSospechosas)/cantTotal)*100)
+
+        Ok = int(((cantTotal - cantSospechosas)/cantTotal)*100)
+
+        reportStatistics = {
+            "Sospechosas": Sospechosas, 
+            "Ok": Ok 
+        }
+        return reportStatistics
+
+    def generateWeekReport(self):
+        now = datetime.datetime.utcnow()
+        lastWeek = now - datetime.timedelta(days=7)
+
+
+        listLastDaysWeek = []
+        listOk = []
+        listSospechosas = []
+
+        for i in range(7):
+            print("\n\n\n\n")
+            #busco desde el día más viejo
+            day1= 7-i
+            day2= 6-i
+            fromDate = now - datetime.timedelta(days=day1)
+            toDate = now - datetime.timedelta(days=day2)
+
+            listLastDaysWeek.append(toDate)
+
+            totales = Estadia.objects.filter(dateCreated__lte=toDate, 
+                                          dateCreated__gte=fromDate)
+            cantTotal= 0
+            cantSospechosas= 0
+            cantOk= 0
+            Sospechosas=0
+            cantTotal = len(totales)
+
+            for estadia in totales:
+                sospechosa = NotificationEgress.objects.filter(isSuspected=True,estadia=estadia)
+                #if(sospechosa != None):
+                if(len(sospechosa)>=1):
+                    cantSospechosas= cantSospechosas +1
+
+            if(cantTotal==0):
+                Sospechosas=0
+                Ok=0
+            else:
+                Sospechosas=cantSospechosas
+                Ok= cantTotal - cantSospechosas
+
+            if(cantTotal != 0):
+                if(cantSospechosas==0):
+                    Ok=cantTotal
+
+            listSospechosas.append(Sospechosas)
+            listOk.append(Ok)
+
+        reportStatistics = {
+            "listaFechas": listLastDaysWeek,
+            "listaSospechosas": listSospechosas, 
+            "listaOk": listOk 
+        }
+        
+        return reportStatistics

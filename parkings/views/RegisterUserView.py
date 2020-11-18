@@ -1,4 +1,3 @@
-
 from rest_framework import status
 from rest_framework.decorators import api_view
 from django.http import JsonResponse
@@ -139,7 +138,6 @@ class RegisterUserView():
 
     @api_view(['DELETE'])
     def bikeOwnerDelete(request, pk):
-        print('request data ' + str(pk))
         user = User.objects.get(username=pk)
         user.delete()
         return Response("user borrado satisfactoriamente")
