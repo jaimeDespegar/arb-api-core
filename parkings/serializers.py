@@ -23,7 +23,7 @@ class EstadiaSerializer(serializers.ModelSerializer):
 class SegmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Segment
-        fields = ("photoPath","datetime","estadia") 
+        fields = ("photoPath","dateCreated","estadia") 
 
 class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
