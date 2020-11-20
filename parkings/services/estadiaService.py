@@ -119,12 +119,12 @@ class EstadiaService():
             for segment in segments:    
                 if segment.segmentType == 'LLEGADA':
                     arrival = {
-                        'dateCreated': segment.datetime,
+                        'dateCreated': segment.dateCreated,
                         'photo': segment.photoPath
                     }
                 else:
                     departure = {
-                        'dateCreated': segment.datetime,
+                        'dateCreated': segment.dateCreated,
                         'photo': segment.photoPath
                     }
 
@@ -187,7 +187,8 @@ class EstadiaService():
             fromDate = now - datetime.timedelta(days=day1)
             toDate = now - datetime.timedelta(days=day2)
 
-            listLastDaysWeek.append(toDate)
+            listLastDaysWeek.append(toDate.strftime("%a %x"))
+            
 
             totales = Estadia.objects.filter(dateCreated__lte=toDate, 
                                           dateCreated__gte=fromDate)
@@ -221,6 +222,189 @@ class EstadiaService():
             "listaFechas": listLastDaysWeek,
             "listaSospechosas": listSospechosas, 
             "listaOk": listOk 
+        }
+        
+        return reportStatistics
+
+########################################################################
+
+    def generateAllEstadiaReport(self, pk):
+        #pk=7
+        now = datetime.datetime.utcnow()
+        lastWeek = now - datetime.timedelta(days=pk)
+
+
+        listLastDaysWeek = []
+        listEntrance = []
+        listEgress = []
+        listEgressSuspected = []
+
+        for i in range(pk):
+            print("\n\n\n\n")
+            day1= pk-i
+            day2= pk-1-i
+            fromDate = now - datetime.timedelta(days=day1)
+            toDate = now - datetime.timedelta(days=day2)
+
+            totales = Segment.objects.filter(dateCreated__lte=toDate, 
+                                          dateCreated__gte=fromDate,
+                                          segmentType= "SALIDA")
+
+            cantIngresosTM=0
+            cantIngresosTT=0
+            cantIngresosTN=0
+            cantEgresosTM=0
+            cantEgresosTT=0
+            cantEgresosTN=0
+            cantEgresosSospechososTM=0
+            cantEgresosSospechososTT=0
+            cantEgresosSospechososTN=0
+
+            for segment in totales:
+
+                horaIngreso=int(segment.estadia.dateCreated.strftime("%H"))
+                horaEgreso= int(segment.dateCreated.strftime("%H"))
+                sospechosa = NotificationEgress.objects.filter(isSuspected=True,estadia=segment.estadia)
+
+                #Ingreso
+                if(horaIngreso>=7 and horaIngreso<=13):
+                    cantIngresosTM= cantIngresosTM +1
+                if(horaIngreso>13 and horaIngreso<=17):
+                    cantIngresosTT= cantIngresosTT +1
+                if(horaIngreso>17 and horaIngreso<=23):
+                    cantIngresosTN= cantIngresosTN +1
+
+                #Egreso
+                if(horaEgreso>=7 and horaEgreso<=13):
+                    cantEgresosTM= cantEgresosTM +1
+                    if(len(sospechosa)>=1):
+                        cantEgresosSospechososTM= cantEgresosSospechososTM +1
+                if(horaEgreso>13 and horaEgreso<=17):
+                    cantEgresosTT= cantEgresosTT +1
+                    if(len(sospechosa)>=1):
+                        cantEgresosSospechososTT= cantEgresosSospechososTT +1
+                if(horaEgreso>17 and horaEgreso<=23):
+                    cantEgresosTN= cantEgresosTN +1
+                    if(len(sospechosa)>=1):
+                        cantEgresosSospechososTN= cantEgresosSospechososTN +1
+
+            listLastDaysWeek.append(toDate.strftime("%d"+str(" TM")))
+            listLastDaysWeek.append(toDate.strftime("%d"+str(" TT")))
+            listLastDaysWeek.append(toDate.strftime("%d"+str(" TN")))
+
+            listEntrance.append(cantIngresosTM)
+            listEntrance.append(cantIngresosTT)
+            listEntrance.append(cantIngresosTN)
+
+            listEgress.append(cantEgresosTM)
+            listEgress.append(cantEgresosTT)
+            listEgress.append(cantEgresosTN)
+
+            listEgressSuspected.append(cantEgresosSospechososTM)
+            listEgressSuspected.append(cantEgresosSospechososTT)
+            listEgressSuspected.append(cantEgresosSospechososTN)
+
+        reportStatistics = {
+            "listLastDaysWeek": listLastDaysWeek,
+            "listEntrance": listEntrance, 
+            "listEgress": listEgress,
+            "listEgressSuspected": listEgressSuspected,
+        }
+        
+        return reportStatistics
+
+########################################################################
+
+    #Se asume que un usuario puede tener solo 1 estadía por día
+    def findUserEstadiaReport(self, pk):
+        pk_days=7
+        now = datetime.datetime.utcnow()
+        lastWeek = now - datetime.timedelta(days=pk_days)
+
+
+        listLastDaysWeek = []
+        listEntrance = []
+        listEgress = []
+
+        for i in range(pk_days):
+            print("\n\n\n\n")
+            day1= pk_days-i
+            day2= pk_days-1-i
+            fromDate = now - datetime.timedelta(days=day1)
+            toDate = now - datetime.timedelta(days=day2)
+
+            estadiaUser = Estadia.objects.filter(dateCreated__lte=toDate, 
+                                          dateCreated__gte=fromDate,
+                                          userName= pk)
+
+            segmentUser = Segment.objects.filter(dateCreated__lte=toDate, 
+                                          dateCreated__gte=fromDate,
+                                          segmentType= "SALIDA",
+                                          estadia= estadiaUser)
+
+            horaIngreso=int(segmentUser.estadia.dateCreated.strftime("%H"))
+            horaEgreso= int(segmentUser.dateCreated.strftime("%H"))
+
+            listLastDaysWeek.append(toDate.strftime("%d"))
+            listEntrance.append(horaIngreso)
+            listEgress.append(horaEgreso)
+
+        reportStatistics = {
+            "listLastDaysWeek": listLastDaysWeek,
+            "listEntrance": listEntrance, 
+            "listEgress": listEgress,
+        }
+        
+        return reportStatistics
+
+########################################################################
+
+    #Se asume que un usuario puede tener solo 1 estadía por día
+    def findPromedioHourEstadiaReport(self):
+        pk_days=7
+        now = datetime.datetime.utcnow()
+        lastWeek = now - datetime.timedelta(days=pk_days)
+
+        listLastDaysWeek = []
+        listEntrance = []
+        listEgress = []
+
+        for i in range(pk_days):
+            listEntranceDay = []
+            listEgressDay = []
+            print("\n\n\n\n")
+            day1= pk_days-i
+            day2= pk_days-1-i
+            fromDate = now - datetime.timedelta(days=day1)
+            toDate = now - datetime.timedelta(days=day2)
+
+            totales = Segment.objects.filter(dateCreated__lte=toDate, 
+                                          dateCreated__gte=fromDate,
+                                          segmentType= "SALIDA")
+            
+            for segment in totales:
+                horaIngreso=int(segment.estadia.dateCreated.strftime("%H"))
+                listEntranceDay.append(horaIngreso)
+                horaEgreso= int(segment.dateCreated.strftime("%H"))
+                listEgressDay.append(horaEgreso)
+
+            sumEntrance=0.0
+            for i in range(0,len(listEntranceDay)):
+                sumEntrance=sumEntrance+listEntranceDay[i]
+            horaIngresoPromedio= sumEntrance/len(listEntranceDay)
+
+            sumEgress=0.0
+            for i in range(0,len(listEgressDay)):
+                sumEgress=sumEgress+listEgressDay[i]
+            horaEgresoPromedio= sumEgress/len(listEgressDay)
+
+            listLastDaysWeek.append(toDate.strftime("%d"))
+            listEntrance.append(horaIngresoPromedio)
+            listEgress.append(horaEgresoPromedio)
+        reportStatistics = {
+            "listLastDaysWeek": listLastDaysWeek,
+            "listEntrance": listEntrance, 
+            "listEgress": listEgress,
         }
         
         return reportStatistics

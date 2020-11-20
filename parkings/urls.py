@@ -23,7 +23,11 @@ urlpatterns = [
     path('estadia/reports/', EstadiaView.findEstadiasReportes, name='estadia-reports'), 
     path('estadia/pendings', PendingStayView.getPendingsStays, name='parking-pendings'),        
     path('estadia/authorize', PendingStayView.authorize, name='parking-authorize'),
-    path('estadia/reportsWeek/', EstadiaView.findEstadiasReportesSemanal, name='estadia-reportsWeek'),            
+    path('estadia/reportsWeek/', EstadiaView.findEstadiasReportesSemanal, name='estadia-reportsWeek'),
+    path('estadia/reportsRange/<int:pk>/', EstadiaView.findEstadiasReportesRango, name='estadia-reportsRange'),     
+    path('estadia/reportsHourUserWeek/<str:pk>/', EstadiaView.findHourUserEstadiaWeekReportes, name='estadia-reportsHourUserWeek'),  
+    path('estadia/reportsPromedioHourUserWeek/', EstadiaView.findPromedioHourUserEstadiaWeekReportes, name='estadia-reportsPromedioHourUserWeek'),     
+
 
     # Registros de Usuarios
     path('bikeOwner-create/', RegisterUserView.registerBikeOwnerCreate, name="bikeOwner-create"),
