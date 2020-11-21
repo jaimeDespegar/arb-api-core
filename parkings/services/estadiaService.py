@@ -119,12 +119,12 @@ class EstadiaService():
             for segment in segments:    
                 if segment.segmentType == 'LLEGADA':
                     arrival = {
-                        'dateCreated': segment.datetime,
+                        'dateCreated': segment.dateCreated,
                         'photo': segment.photoPath
                     }
                 else:
                     departure = {
-                        'dateCreated': segment.datetime,
+                        'dateCreated': segment.dateCreated,
                         'photo': segment.photoPath
                     }
 

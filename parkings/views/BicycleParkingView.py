@@ -32,7 +32,7 @@ class BicycleParkingView():
     @api_view(['GET'])
     def bicycleParkingAvailability(request):
         freePlaces = BicycleParkingService.getCountFreePlaces()        
-        return Response({'freePlaces':freePlaces})
+        return Response(freePlaces)
 
     @api_view(['PUT'])
     def updateBicicleParking(request):
