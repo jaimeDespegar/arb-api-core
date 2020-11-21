@@ -111,3 +111,21 @@ class EstadiaView():
         service = EstadiaService()
         data = service.generateWeekReport()
         return Response(data)
+
+    @api_view(['GET'])
+    def findEstadiasReportesRango(request, pk):
+        service = EstadiaService()
+        data = service.generateAllEstadiaReport(pk)
+        return Response(data)
+
+    @api_view(['GET'])
+    def findHourUserEstadiaWeekReportes(request, pk):
+        service = EstadiaService()
+        data = service.findUserEstadiaReport(pk)
+        return Response(data)
+
+    @api_view(['GET'])
+    def findPromedioHourUserEstadiaWeekReportes(request):
+        service = EstadiaService()
+        data = service.findPromedioHourEstadiaReport()
+        return Response(data)
