@@ -119,13 +119,25 @@ class EstadiaView():
         return Response(data)
 
     @api_view(['GET'])
-    def findHourUserEstadiaWeekReportes(request, pk):
-        service = EstadiaService()
-        data = service.findUserEstadiaReport(pk)
-        return Response(data)
-
-    @api_view(['GET'])
     def findPromedioHourUserEstadiaWeekReportes(request):
         service = EstadiaService()
         data = service.findPromedioHourEstadiaReport()
+        return Response(data)
+
+    @api_view(['GET'])
+    def findHourUserEstadiaWeekReportes(request, pk, pk_days):
+        service = EstadiaService()
+        data = service.findUserEstadiaReport(pk,pk_days)
+        return Response(data)
+
+    @api_view(['GET'])
+    def findHourAllEstadiaWeekReportes(request, pk_days):
+        service = EstadiaService()
+        data = service.findAllEstadiaReport(pk_days)
+        return Response(data)
+
+    @api_view(['GET'])
+    def findHourAllSuspectedAndPeakTime(request, pk_days):
+        service = EstadiaService()
+        data = service.findAllEstadiaSuspectedAndPeakTimeReport(pk_days)
         return Response(data)

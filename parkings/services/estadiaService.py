@@ -2,7 +2,7 @@ from ..models import Estadia, Segment
 from ..models import MoveCamera, Estadia, Place, NotificationEgress
 import time
 import datetime
-
+from collections import Counter
 
 class EstadiaService():
 
@@ -310,21 +310,37 @@ class EstadiaService():
             "listEgress": listEgress,
             "listEgressSuspected": listEgressSuspected,
         }
-        
+        print(reportStatistics)
         return reportStatistics
 
 ########################################################################
 
     #Se asume que un usuario puede tener solo 1 estadía por día
-    def findUserEstadiaReport(self, pk):
-        pk_days=7
+    def findUserEstadiaReport(self, pk, pk_days):
+        print("pk: ",pk)
+        print("pk_days: ",pk_days)
+        #pk_days=7
         now = datetime.datetime.utcnow()
         lastWeek = now - datetime.timedelta(days=pk_days)
 
 
-        listLastDaysWeek = []
+        listDaysWeek = ["LU","MA","MI","JU","VI","SA"]
+        #general
         listEntrance = []
         listEgress = []
+        #particular
+        listEntranceLunes = []
+        listEntranceMartes = []
+        listEntranceMiercoles = []
+        listEntranceJueves = []
+        listEntranceViernes = []
+        listEntranceSabado = []
+        listEgressLunes = []
+        listEgressMartes = []
+        listEgressMiercoles = []
+        listEgressJueves = []
+        listEgressViernes = []
+        listEgressSabado = []
 
         for i in range(pk_days):
             print("\n\n\n\n")
@@ -336,25 +352,253 @@ class EstadiaService():
             estadiaUser = Estadia.objects.filter(dateCreated__lte=toDate, 
                                           dateCreated__gte=fromDate,
                                           userName= pk)
+            print("estadiaUser:")
+            print(estadiaUser)
+            print("len(estadiaUser) :", len(estadiaUser) )
+            if(len(estadiaUser) == 1):
+                segmentUser = Segment.objects.filter(segmentType= "SALIDA",
+                                          estadia= estadiaUser[0])[0]
+                print(segmentUser)
+                if(segmentUser is not None):
+                    horaIngreso=int(segmentUser.estadia.dateCreated.strftime("%H"))
+                    horaEgreso= int(segmentUser.dateCreated.strftime("%H"))
 
-            segmentUser = Segment.objects.filter(dateCreated__lte=toDate, 
-                                          dateCreated__gte=fromDate,
-                                          segmentType= "SALIDA",
-                                          estadia= estadiaUser)
+                    if(segmentUser.estadia.dateCreated.strftime("%A")=="Monday"): 
+                        listEntranceLunes.append(horaIngreso)
+                        listEgressLunes.append(horaEgreso)
+                    if(segmentUser.estadia.dateCreated.strftime("%A")=="Tuesday"): 
+                        listEntranceMartes.append(horaIngreso)
+                        listEgressMartes.append(horaEgreso)
+                    if(segmentUser.estadia.dateCreated.strftime("%A")=="Wednesday"): 
+                        listEntranceMiercoles.append(horaIngreso)
+                        listEgressMiercoles.append(horaEgreso)
+                    if(segmentUser.estadia.dateCreated.strftime("%A")=="Thursday"): 
+                        listEntranceJueves.append(horaIngreso)
+                        listEgressJueves.append(horaEgreso)
+                    if(segmentUser.estadia.dateCreated.strftime("%A")=="Friday"): 
+                        listEntranceViernes.append(horaIngreso)
+                        listEgressViernes.append(horaEgreso)
+                    if(segmentUser.estadia.dateCreated.strftime("%A")=="Saturday"): 
+                        listEntranceSabado.append(horaIngreso)
+                        listEgressSabado.append(horaEgreso)
+        
+        #Validación de listas NO vacías
+        if(len(listEntranceLunes)==0):
+            listEntranceLunes.append(0)
+        if(len(listEntranceMartes)==0):
+            listEntranceMartes.append(0)
+        if(len(listEntranceMiercoles)==0):
+            listEntranceMiercoles.append(0)
+        if(len(listEntranceJueves)==0):
+            listEntranceJueves.append(0)
+        if(len(listEntranceViernes)==0):
+            listEntranceViernes.append(0)
+        if(len(listEntranceSabado)==0):
+            listEntranceSabado.append(0)
 
-            horaIngreso=int(segmentUser.estadia.dateCreated.strftime("%H"))
-            horaEgreso= int(segmentUser.dateCreated.strftime("%H"))
+        if(len(listEgressLunes)==0):
+            listEgressLunes.append(0)
+        if(len(listEgressMartes)==0):
+            listEgressMartes.append(0)
+        if(len(listEgressMiercoles)==0):
+            listEgressMiercoles.append(0)
+        if(len(listEgressJueves)==0):
+            listEgressJueves.append(0)
+        if(len(listEgressViernes)==0):
+            listEgressViernes.append(0)
+        if(len(listEgressSabado)==0):
+            listEgressSabado.append(0)
 
-            listLastDaysWeek.append(toDate.strftime("%d"))
-            listEntrance.append(horaIngreso)
-            listEgress.append(horaEgreso)
+        #ingresos por dias
+        Ilu = Counter(listEntranceLunes)
+        Ima = Counter(listEntranceMartes)
+        Imi = Counter(listEntranceMiercoles)
+        Iju = Counter(listEntranceJueves)
+        Ivi = Counter(listEntranceViernes)
+        Isa = Counter(listEntranceSabado)
+        #lista final de ingresos
+        listEntrance.append("Ingresos: ")
+        listEntrance.append(max(Ilu, key=Ilu.get))
+        listEntrance.append(max(Ima, key=Ima.get))
+        listEntrance.append(max(Imi, key=Imi.get))
+        listEntrance.append(max(Iju, key=Iju.get))
+        listEntrance.append(max(Ivi, key=Ivi.get))
+        listEntrance.append(max(Isa, key=Isa.get))
+
+        #egresos por dias
+        Olu = Counter(listEgressLunes)
+        Oma = Counter(listEgressMartes)
+        Omi = Counter(listEgressMiercoles)
+        Oju = Counter(listEgressJueves)
+        Ovi = Counter(listEgressViernes)
+        Osa = Counter(listEgressSabado)
+        #lista final de egresos
+        listEgress.append("Egresos: ")
+        listEgress.append(max(Olu, key=Olu.get))
+        listEgress.append(max(Oma, key=Oma.get))
+        listEgress.append(max(Omi, key=Omi.get))
+        listEgress.append(max(Oju, key=Oju.get))
+        listEgress.append(max(Ovi, key=Ovi.get))
+        listEgress.append(max(Osa, key=Osa.get))
 
         reportStatistics = {
-            "listLastDaysWeek": listLastDaysWeek,
+            "listDaysWeek": listDaysWeek,
             "listEntrance": listEntrance, 
             "listEgress": listEgress,
         }
-        
+        print(reportStatistics)
+
+        reportStatistics3 = {
+            "modo": "Ingresos",
+            "lunes": max(Ilu, key=Ilu.get),
+            "martes": max(Ima, key=Ima.get),
+            "miercoles": max(Imi, key=Imi.get),
+            "jueves": max(Iju, key=Iju.get),
+            "viernes": max(Ivi, key=Ivi.get),
+            "sabado": max(Isa, key=Isa.get),
+        }
+        reportStatistics4 = {
+            "modo": "Egresos",
+            "lunes": max(Olu, key=Olu.get),
+            "martes": max(Oma, key=Oma.get),
+            "miercoles": max(Omi, key=Omi.get),
+            "jueves": max(Oju, key=Oju.get),
+            "viernes": max(Ovi, key=Ovi.get),
+            "sabado": max(Osa, key=Osa.get),
+        }
+
+        lista = []
+        lista.append(reportStatistics3)
+        lista.append(reportStatistics4)
+        return lista
+
+########################################################################
+
+    #Se asume que por cada dia hay muchos ingresos y egresos
+    def findAllEstadiaReport(self, pk_days):
+        pk_days=7
+        now = datetime.datetime.utcnow()
+        lastWeek = now - datetime.timedelta(days=pk_days)
+
+
+        listDaysWeek = ["LU","MA","MI","JU","VI","SA"]
+        #general
+        listEntrance = []
+        listEgress = []
+        #particular
+        listEntranceLunes = []
+        listEntranceMartes = []
+        listEntranceMiercoles = []
+        listEntranceJueves = []
+        listEntranceViernes = []
+        listEntranceSabado = []
+        listEgressLunes = []
+        listEgressMartes = []
+        listEgressMiercoles = []
+        listEgressJueves = []
+        listEgressViernes = []
+        listEgressSabado = []
+
+        for i in range(pk_days):
+            print("\n\n\n\n")
+            day1= pk_days-i
+            day2= pk_days-1-i
+            fromDate = now - datetime.timedelta(days=day1)
+            toDate = now - datetime.timedelta(days=day2)
+
+            totales= Segment.objects.filter(dateCreated__lte=toDate, 
+                                          dateCreated__gte=fromDate,
+                                          segmentType= "SALIDA")
+            for segmentUser in totales:
+                horaIngreso=int(segmentUser.estadia.dateCreated.strftime("%H"))
+                horaEgreso= int(segmentUser.dateCreated.strftime("%H"))
+
+                if(segmentUser.estadia.dateCreated.strftime("%A")=="Monday"): 
+                    listEntranceLunes.append(horaIngreso)
+                    listEgressLunes.append(horaEgreso)
+                if(segmentUser.estadia.dateCreated.strftime("%A")=="Tuesday"): 
+                    listEntranceMartes.append(horaIngreso)
+                    listEgressMartes.append(horaEgreso)
+                if(segmentUser.estadia.dateCreated.strftime("%A")=="Wednesday"): 
+                    listEntranceMiercoles.append(horaIngreso)
+                    listEgressMiercoles.append(horaEgreso)
+                if(segmentUser.estadia.dateCreated.strftime("%A")=="Thursday"): 
+                    listEntranceJueves.append(horaIngreso)
+                    listEgressJueves.append(horaEgreso)
+                if(segmentUser.estadia.dateCreated.strftime("%A")=="Friday"): 
+                    listEntranceViernes.append(horaIngreso)
+                    listEgressViernes.append(horaEgreso)
+                if(segmentUser.estadia.dateCreated.strftime("%A")=="Saturday"): 
+                    listEntranceSabado.append(horaIngreso)
+                    listEgressSabado.append(horaEgreso)
+
+        #Validación de listas NO vacías
+        if(len(listEntranceLunes)==0):
+            listEntranceLunes.append(0)
+        if(len(listEntranceMartes)==0):
+            listEntranceMartes.append(0)
+        if(len(listEntranceMiercoles)==0):
+            listEntranceMiercoles.append(0)
+        if(len(listEntranceJueves)==0):
+            listEntranceJueves.append(0)
+        if(len(listEntranceViernes)==0):
+            listEntranceViernes.append(0)
+        if(len(listEntranceSabado)==0):
+            listEntranceSabado.append(0)
+
+        if(len(listEgressLunes)==0):
+            listEgressLunes.append(0)
+        if(len(listEgressMartes)==0):
+            listEgressMartes.append(0)
+        if(len(listEgressMiercoles)==0):
+            listEgressMiercoles.append(0)
+        if(len(listEgressJueves)==0):
+            listEgressJueves.append(0)
+        if(len(listEgressViernes)==0):
+            listEgressViernes.append(0)
+        if(len(listEgressSabado)==0):
+            listEgressSabado.append(0)
+
+        #ingresos por dias
+        Ilu = Counter(listEntranceLunes)
+        Ima = Counter(listEntranceMartes)
+        Imi = Counter(listEntranceMiercoles)
+        Iju = Counter(listEntranceJueves)
+        Ivi = Counter(listEntranceViernes)
+        Isa = Counter(listEntranceSabado)
+        #lista final de ingresos
+        listEntrance.append(max(Ilu, key=Ilu.get))
+        listEntrance.append(max(Ima, key=Ima.get))
+        listEntrance.append(max(Imi, key=Imi.get))
+        listEntrance.append(max(Iju, key=Iju.get))
+        listEntrance.append(max(Ivi, key=Ivi.get))
+        listEntrance.append(max(Isa, key=Isa.get))
+
+        #egresos por dias
+        Olu = Counter(listEgressLunes)
+        Oma = Counter(listEgressMartes)
+        Omi = Counter(listEgressMiercoles)
+        Oju = Counter(listEgressJueves)
+        Ovi = Counter(listEgressViernes)
+        Osa = Counter(listEgressSabado)
+        #lista final de egresos
+        listEgress.append(max(Olu, key=Olu.get))
+        listEgress.append(max(Oma, key=Oma.get))
+        listEgress.append(max(Omi, key=Omi.get))
+        listEgress.append(max(Oju, key=Oju.get))
+        listEgress.append(max(Ovi, key=Ovi.get))
+        listEgress.append(max(Osa, key=Osa.get))
+
+        listEntranceFinal = []
+        listEntranceFinal.append(listEntrance)
+        listEgressFinal = []
+        listEgressFinal.append(listEgress)
+        reportStatistics = {
+            "listDaysWeek": listDaysWeek,
+            "listEntrance": listEntranceFinal, 
+            "listEgress": listEgressFinal,
+        }
+        print(reportStatistics)
         return reportStatistics
 
 ########################################################################
@@ -407,4 +651,149 @@ class EstadiaService():
             "listEgress": listEgress,
         }
         
+        return reportStatistics
+
+########################################################################
+
+
+########################################################################
+
+    #Se asume que por cada dia hay muchos ingresos y egresos
+    def findAllEstadiaSuspectedAndPeakTimeReport(self, pk_days):
+        pk_days=7
+        now = datetime.datetime.utcnow()
+        lastWeek = now - datetime.timedelta(days=pk_days)
+
+
+        listDaysWeek = ["LU","MA","MI","JU","VI","SA"]
+        #general
+        listHoursParking = []
+        listEgressSuspected = []
+        #particular
+        listHoursParkingLunes = []
+        listHoursParkingMartes = []
+        listHoursParkingMiercoles = []
+        listHoursParkingJueves = []
+        listHoursParkingViernes = []
+        listHoursParkingSabado = []
+
+        listEgressSuspectedLunes = []
+        listEgressSuspectedMartes = []
+        listEgressSuspectedMiercoles = []
+        listEgressSuspectedJueves = []
+        listEgressSuspectedViernes = []
+        listEgressSuspectedSabado = []
+
+        for i in range(pk_days):
+            print("\n\n\n\n")
+            day1= pk_days-i
+            day2= pk_days-1-i
+            fromDate = now - datetime.timedelta(days=day1)
+            toDate = now - datetime.timedelta(days=day2)
+
+            totales= Segment.objects.filter(dateCreated__lte=toDate, 
+                                          dateCreated__gte=fromDate,
+                                          segmentType= "LLEGADA")
+
+            for segmentUser in totales:
+                horaIngreso=int(segmentUser.estadia.dateCreated.strftime("%H"))
+                horaEgreso= int(segmentUser.dateCreated.strftime("%H"))
+                listaRangoDeUso= list(range(horaIngreso,horaEgreso+1))
+                sospechosa = NotificationEgress.objects.filter(isSuspected=True,
+                                                    estadia=segmentUser.estadia)
+
+                if(segmentUser.estadia.dateCreated.strftime("%A")=="Monday"): 
+                    listHoursParkingLunes=listHoursParkingLunes+listaRangoDeUso
+                    if(sospechosa is not None):
+                        listEgressSuspectedLunes.append(horaEgreso)
+                if(segmentUser.estadia.dateCreated.strftime("%A")=="Tuesday"): 
+                    listHoursParkingMartes= listHoursParkingMartes+listaRangoDeUso
+                    if(sospechosa is not None):
+                        listEgressSuspectedMartes.append(horaEgreso)
+                if(segmentUser.estadia.dateCreated.strftime("%A")=="Wednesday"): 
+                    listHoursParkingMiercoles= listHoursParkingMiercoles+listaRangoDeUso
+                    if(sospechosa is not None):
+                        listEgressSuspectedMiercoles.append(horaEgreso)
+                if(segmentUser.estadia.dateCreated.strftime("%A")=="Thursday"): 
+                    listHoursParkingJueves= listHoursParkingJueves+listaRangoDeUso
+                    if(sospechosa is not None):
+                        listEgressSuspectedJueves.append(horaEgreso)
+                if(segmentUser.estadia.dateCreated.strftime("%A")=="Friday"): 
+                    listHoursParkingViernes= listHoursParkingViernes+listaRangoDeUso
+                    if(sospechosa is not None):
+                        listEgressSuspectedViernes.append(horaEgreso)
+                if(segmentUser.estadia.dateCreated.strftime("%A")=="Saturday"): 
+                    listHoursParkingSabado= listHoursParkingSabado+listaRangoDeUso
+                    if(sospechosa is not None):
+                        listEgressSuspectedSabado.append(horaEgreso)
+
+
+
+        #Validación de listas NO vacías
+        if(len(listHoursParkingLunes)==0):
+            listHoursParkingLunes.append(0)
+        if(len(listHoursParkingMartes)==0):
+            listHoursParkingMartes.append(0)
+        if(len(listHoursParkingMiercoles)==0):
+            listHoursParkingMiercoles.append(0)
+        if(len(listHoursParkingJueves)==0):
+            listHoursParkingJueves.append(0)
+        if(len(listHoursParkingViernes)==0):
+            listHoursParkingViernes.append(0)
+        if(len(listHoursParkingSabado)==0):
+            listHoursParkingSabado.append(0)
+
+        if(len(listEgressSuspectedLunes)==0):
+            listEgressSuspectedLunes.append(0)
+        if(len(listEgressSuspectedMartes)==0):
+            listEgressSuspectedMartes.append(0)
+        if(len(listEgressSuspectedMiercoles)==0):
+            listEgressSuspectedMiercoles.append(0)
+        if(len(listEgressSuspectedJueves)==0):
+            listEgressSuspectedJueves.append(0)
+        if(len(listEgressSuspectedViernes)==0):
+            listEgressSuspectedViernes.append(0)
+        if(len(listEgressSuspectedSabado)==0):
+            listEgressSuspectedSabado.append(0)
+
+        #ingresos por dias
+        Ilu = Counter(listHoursParkingLunes)
+        Ima = Counter(listHoursParkingMartes)
+        Imi = Counter(listHoursParkingMiercoles)
+        Iju = Counter(listHoursParkingJueves)
+        Ivi = Counter(listHoursParkingViernes)
+        Isa = Counter(listHoursParkingSabado)
+        #lista final de ingresos
+        listHoursParking.append(max(Ilu, key=Ilu.get))
+        listHoursParking.append(max(Ima, key=Ima.get))
+        listHoursParking.append(max(Imi, key=Imi.get))
+        listHoursParking.append(max(Iju, key=Iju.get))
+        listHoursParking.append(max(Ivi, key=Ivi.get))
+        listHoursParking.append(max(Isa, key=Isa.get))
+
+        #egresos por dias
+        Olu = Counter(listEgressSuspectedLunes)
+        Oma = Counter(listEgressSuspectedMartes)
+        Omi = Counter(listEgressSuspectedMiercoles)
+        Oju = Counter(listEgressSuspectedJueves)
+        Ovi = Counter(listEgressSuspectedViernes)
+        Osa = Counter(listEgressSuspectedSabado)
+        #lista final de egresos
+        listEgressSuspected.append(max(Olu, key=Olu.get))
+        listEgressSuspected.append(max(Oma, key=Oma.get))
+        listEgressSuspected.append(max(Omi, key=Omi.get))
+        listEgressSuspected.append(max(Oju, key=Oju.get))
+        listEgressSuspected.append(max(Ovi, key=Ovi.get))
+        listEgressSuspected.append(max(Osa, key=Osa.get))
+
+        listHoursParkingFinal = []
+        listHoursParkingFinal.append(listHoursParking)
+        listEgressSuspectedFinal = []
+        listEgressSuspectedFinal.append(listEgressSuspected)
+        reportStatistics = {
+            "listDaysWeek": listDaysWeek,
+            "listHoursParkingFinal": listHoursParkingFinal, 
+            "listEgressSuspectedFinal": listEgressSuspectedFinal,
+        }
+        print(reportStatistics)
         return reportStatistics
