@@ -90,11 +90,11 @@ class EstadiaView():
             filters['userName__exact'] = userName #igual
         
         if (isAnonymous is not None):
-            filters['isAnonymous'] = isAnonymous
+            filters['isAnonymous__exact'] = isAnonymous
             
         if (isActive is not None):
             filters['isActive__exact'] = isActive.lower() == 'true'
-                 
+        
         result = service.findByFilters(filters, isSuspected)
         return Response(result)
 
