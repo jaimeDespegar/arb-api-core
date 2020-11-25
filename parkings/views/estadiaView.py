@@ -141,3 +141,10 @@ class EstadiaView():
         service = EstadiaService()
         data = service.findAllEstadiaSuspectedAndPeakTimeReport(pk_days)
         return Response(data)
+
+    @api_view(['GET'])
+    def getStatusStayByUser(request):
+        service = EstadiaService()
+        userName = request.query_params.get('userName', None)
+        data = service.getStatusStay(userName)
+        return Response(data, status=status.HTTP_200_OK)
