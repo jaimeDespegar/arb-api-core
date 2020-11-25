@@ -1,3 +1,3 @@
-from .estadiaService import EstadiaService
+from .estadiaService import EstadiaService, ReportService
 
-__all__ = ['EstadiaService']
+__all__ = ['EstadiaService', 'ReportService']
