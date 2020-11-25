@@ -1,4 +1,4 @@
-from ..models import BicycleParking,Place,BicycleAndPlaces
+from ..models import BicycleParking,Place,BicycleAndPlaces, Estadia
 
 class BicycleParkingService:
 
@@ -27,9 +27,23 @@ class BicycleParkingService:
             places = Place.objects.filter(bicycleParking=p)
             placesAux = []
             for place in places:
+                
+                if (place.occupied):
+                    try:
+                        stay = Estadia.objects.get(place=place, isActive=True)
+                        if (stay.isAnonymous):
+                            dateAssociatedStay = stay.dateCreated
+                        else:
+                            dateAssociatedStay = ''
+                    except Estadia.DoesNotExist:
+                        dateAssociatedStay = ''
+                else:
+                    dateAssociatedStay = ''
+                
                 aux = {
-                        "placeNumer": place.placeNumber,
-                        "occupied": place.occupied
+                        "placeNumber": place.placeNumber,
+                        "occupied": place.occupied,
+                        "dateAssociatedStay": dateAssociatedStay
                       }
                 placesAux.append(aux)  
             

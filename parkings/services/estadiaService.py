@@ -1,5 +1,5 @@
 from ..models import Estadia, Segment
-from ..models import MoveCamera, Estadia, Place, NotificationEgress
+from ..models import MoveCamera, Estadia, Place, NotificationEgress, BicycleParking, PendingStay
 import time
 import datetime
 
@@ -54,7 +54,7 @@ class EstadiaService():
                                estadia=estadia)
         
         #buscar el lugar asociado y ponerlo en False, va a romper!! filtrar con placeNumber
-        place= Place.objects.filter(placeNumber= estadia.placeUsed)[0]
+        place= estadia.place #Place.objects.filter(placeNumber= estadia.place)[0] CHEQUEAR!
         place.occupied= False
         place.save()
 
@@ -63,16 +63,12 @@ class EstadiaService():
         print('Estadia anonima cerrada')
 
     
-    def updateAnonymousCase(self):
-        exitMoves = MoveCamera.objects.filter(occupied=False, registered=False)
-        
-        for move in exitMoves:
-            estadia = Estadia.objects.get(placeUsed=move.placeNumber, userName='Anonimo')
-    
     def registerEntrance(self, data):
         
-        try: 
-            stayCreated = Estadia.objects.get(placeUsed=data['place'], isActive=True)
+        parking = BicycleParking.objects.get(number=data['parkingNumber'])
+        place = Place.objects.get(placeNumber=data['place'], bicycleParking=parking)
+        try:
+            stayCreated = Estadia.objects.get(place=place, isActive=True)
         except Estadia.DoesNotExist:
             stayCreated = None
         
@@ -80,7 +76,7 @@ class EstadiaService():
             stayCreated.userName = data['userName']
             stayCreated.isAnonymous = False
             stayCreated.save()
-            place = stayCreated.place
+            # place = stayCreated.place
             place.occupied= True
             place.save()
             print('Estadia registrada para el usuario ' + data['userName'])
@@ -408,3 +404,22 @@ class EstadiaService():
         }
         
         return reportStatistics
+
+
+    def getStatusStay(self, userName):
+        try:
+            pending = PendingStay.objects.get(userName=userName, isActive=True)
+            status = 'PENDING'
+            return {
+                    'status': status, 
+                    'parking': pending.stay.place.bicycleParking.description, 
+                    'place': pending.stay.place.placeNumber
+                   }
+        except PendingStay.DoesNotExist:
+            try:
+                stay = Estadia.objects.filter(userName=userName, isActive=True)
+                status = 'ENTRANCE_DONE' if len(stay) > 0 else 'WITH_OUT_STAY'
+            except Estadia.DoesNotExist:
+                status = 'WITH_OUT_STAY'
+        
+        return {'status': status}
