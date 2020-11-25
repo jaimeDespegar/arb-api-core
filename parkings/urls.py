@@ -28,8 +28,11 @@ urlpatterns = [
     path('estadia/authorize', PendingStayView.authorize, name='parking-authorize'),
     path('estadia/reportsWeek/', EstadiaView.findEstadiasReportesSemanal, name='estadia-reportsWeek'),
     path('estadia/reportsRange/<int:pk>/', EstadiaView.findEstadiasReportesRango, name='estadia-reportsRange'),     
-    path('estadia/reportsHourUserWeek/<str:pk>/', EstadiaView.findHourUserEstadiaWeekReportes, name='estadia-reportsHourUserWeek'),  
-    path('estadia/reportsPromedioHourUserWeek/', EstadiaView.findPromedioHourUserEstadiaWeekReportes, name='estadia-reportsPromedioHourUserWeek'),
+    path('estadia/reportsHourUserWeek/<str:pk>/<int:pk_days>/', EstadiaView.findHourUserEstadiaWeekReportes, name='estadia-reportsHourUserWeek'),  
+    path('estadia/reportsHourAllWeek/<int:pk_days>/', EstadiaView.findHourAllEstadiaWeekReportes, name='estadia-reportsHourAllWeek'),  
+    path('estadia/reportsPromedioHourUserWeek/', EstadiaView.findPromedioHourUserEstadiaWeekReportes, name='estadia-reportsPromedioHourUserWeek'),  
+    path('estadia/reportsHourAllSuspectedAndPeakTime/<int:pk_days>/', EstadiaView.findHourAllSuspectedAndPeakTime, name='estadia-reportsHourAllSuspectedAndPeakTime'),   
+
 
     # Registros de Usuarios
     path('bikeOwner-create/', RegisterUserView.registerBikeOwnerCreate, name="bikeOwner-create"),
