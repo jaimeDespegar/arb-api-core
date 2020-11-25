@@ -12,6 +12,10 @@ urlpatterns = [
     path('bicycleParking-update/', BicycleParkingView.updateBicicleParking, name="bicycleParking-update"),
     path('bicycleParking-delete/<int:number>/', BicycleParkingView.bicicleParkingDelete, name="bicycleParking-delete"),
     path('bicycleParkingAndPlaces/', BicycleParkingView.getAllBicyclesParkings, name="bicycleParkingAndPlaces"),
+    path('movebicycleparking-create/', MoveCameraView.moveBicycleparkingCreate, name="movebicycleparking-create"),
+    path('moveplace-create/', MoveCameraView.movePlaceCreate, name="moveplace-create"),
+
+
 
     # Estadia
     path('estadias-getAll/', EstadiaView.getAll, name="estadias-getAll"),
