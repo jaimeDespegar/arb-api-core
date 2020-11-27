@@ -120,7 +120,20 @@ class RegisterUserView():
         print(request)
         userEdited = request.data
 
-        user = User.objects.get(username=pk)
+        try:
+            user = User.objects.get(username=pk)
+        except User.DoesNotExist:
+            user = None 
+
+        try:
+            oldmail = User.objects.get(username=pk, email=userEdited['email'])
+        except User.DoesNotExist:
+            oldmail = None 
+        if (oldmail == None):
+            return Response("Error el email ya existe", status=status.HTTP_503_SERVICE_UNAVAILABLE)
+
+
+
         bikeOwner = BikeOwner.objects.get(user=user)
         user.email = userEdited["email"]
         user.set_password(userEdited["password"])
