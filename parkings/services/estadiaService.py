@@ -199,3 +199,11 @@ class EstadiaService():
                 status = 'WITH_OUT_STAY'
         
         return {'status': status}
+
+    def desactiveOldEstadias(self):
+        now = datetime.datetime.utcnow()
+        totales = Estadia.objects.filter(isActive=True)
+        for estadia in totales:
+            if(estadia.dateCreated.strftime("%x")!= now.strftime("%x")):
+                estadia.isActive=False
+                estadia.save()
