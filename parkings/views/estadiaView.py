@@ -148,3 +148,9 @@ class EstadiaView():
         userName = request.query_params.get('userName', None)
         data = service.getStatusStay(userName)
         return Response(data, status=status.HTTP_200_OK)
+
+    @api_view(['GET'])
+    def cleanOldStadias(request):
+        service = EstadiaService()
+        data = service.desactiveOldEstadias()
+        return Response(data, status=status.HTTP_200_OK)

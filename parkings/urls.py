@@ -36,6 +36,7 @@ urlpatterns = [
     path('estadia/reportsHourAllWeek/<int:pk_days>/', EstadiaView.findHourAllEstadiaWeekReportes, name='estadia-reportsHourAllWeek'),  
     path('estadia/reportsPromedioHourUserWeek/', EstadiaView.findPromedioHourUserEstadiaWeekReportes, name='estadia-reportsPromedioHourUserWeek'),  
     path('estadia/reportsHourAllSuspectedAndPeakTime/<int:pk_days>/', EstadiaView.findHourAllSuspectedAndPeakTime, name='estadia-reportsHourAllSuspectedAndPeakTime'),   
+    path('estadia/cleanOldStadias/', EstadiaView.cleanOldStadias, name='estadia-cleanOldStadias'),   
 
 
     # Registros de Usuarios
