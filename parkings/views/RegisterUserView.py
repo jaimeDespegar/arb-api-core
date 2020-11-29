@@ -116,8 +116,6 @@ class RegisterUserView():
     #servicio para que el usuario modifique sus datos de reistro
     @api_view(['PUT'])
     def registerBikeOwnerUpdateUser(request, pk):
-        print("registerBikeOwnerUpdateUser")
-        print(request)
         userEdited = request.data
 
         try:

@@ -39,6 +39,7 @@ class PendingStayView():
               'dateCreated': i.dateCreated,
               'place': place.placeNumber,
               'isAuthorize': i.isAuthorize,
+              'isActive': i.isActive,
               'bicycleParking': {
                 'number': place.bicycleParking.number,
                 'description': place.bicycleParking.description              
@@ -58,7 +59,7 @@ class PendingStayView():
         userName = request.data['userName']
         isAuthorize = request.data['isAuthorize']
         
-        pendingStay = PendingStay.objects.get(userName=userName)
+        pendingStay = PendingStay.objects.get(userName=userName, isActive=True)
         stay = pendingStay.stay
         if (isAuthorize):
             stay.userName = userName

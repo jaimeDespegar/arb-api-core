@@ -1,7 +1,7 @@
 
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
-from .models import MoveCamera, BicycleParking, Estadia, Segment, Notification, NotificationEgress, PendingStay, Place
+from .models import MoveCamera, BicycleParking, Estadia, Segment, NotificationEgress, PendingStay, Place
 from .models.user import User, BikeOwner
 
 
@@ -25,23 +25,15 @@ class SegmentSerializer(serializers.ModelSerializer):
         model = Segment
         fields = ("photoPath","dateCreated","estadia") 
 
-class NotificationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Notification
-        fields = '__all__'  
-        #fields = ("userName", "photoPath")
-
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = '__all__'  
-        #fields = ("name", "email","password")
 
 class BikeOwnerSerializer(serializers.ModelSerializer):
     class Meta:
         model = BikeOwner
         fields = '__all__'  
-        #fields = ("name", "email","password", "bicyclePhoto", "profilePhoto", "pet", "street", "movie")
 
 class NotificationEgressSerializer(serializers.ModelSerializer):
     class Meta:

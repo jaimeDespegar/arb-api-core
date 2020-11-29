@@ -8,17 +8,17 @@ from rest_framework import status
 from rest_framework.views import APIView
 from ..serializers import CreateUserSerializer
 from ..models import BikeOwner
-import json
 from django.contrib.auth.models import User
+import json
 
 class CreateUserAPIView(CreateAPIView):
     serializer_class = CreateUserSerializer
     permission_classes = [AllowAny]
 
     def create(self, request, *args, **kwargs):
-        print("create!")
+        print("create user")
 
-        newUser = request.data['body']
+        newUser = request.data
         # agregar validacion si existe el userName o email y devolver 500 con mensaje
         try:
             olduser = User.objects.get(username=newUser['username'])
