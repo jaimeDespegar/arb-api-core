@@ -2,7 +2,9 @@ from django.urls import path
 from .views import MoveCameraView, BicycleParkingView, EstadiaView, RegisterUserView, NotificationEgressView
 from .views import RegisterUserView, CreateUserAPIView, LogoutUserAPIView, RecoveryUserView, PendingStayView
 from rest_framework.authtoken.views import obtain_auth_token
-
+from django.contrib.auth.views import LoginView, PasswordResetView, PasswordResetConfirmView, PasswordResetCompleteView
+from django.contrib.auth import views as auth_views
+from django.views.decorators.csrf import csrf_exempt
 
 urlpatterns = [
     path('move-create/', MoveCameraView.moveCreate, name="move-create"),
@@ -30,7 +32,7 @@ urlpatterns = [
     path('estadia/pendings/response', PendingStayView.responseUser, name='pendings-response'),
     path('estadia/pendings/create/', PendingStayView.createPendingStay, name='pendings-create'),        
     path('estadia/authorize', PendingStayView.authorize, name='parking-authorize'),
-    path('estadia/reportsWeek/', EstadiaView.findEstadiasReportesSemanal, name='estadia-reportsWeek'),
+    path('estadia/reportsWeek/<int:pk_days>/', EstadiaView.findEstadiasReportesSemanal, name='estadia-reportsWeek'),
     path('estadia/reportsRange/<int:pk>/', EstadiaView.findEstadiasReportesRango, name='estadia-reportsRange'),     
     path('estadia/reportsHourUserWeek/<str:pk>/<int:pk_days>/', EstadiaView.findHourUserEstadiaWeekReportes, name='estadia-reportsHourUserWeek'),  
     path('estadia/reportsHourAllWeek/<int:pk_days>/', EstadiaView.findHourAllEstadiaWeekReportes, name='estadia-reportsHourAllWeek'),  
@@ -58,6 +60,17 @@ urlpatterns = [
     path('auth/login/', obtain_auth_token, name='auth_user_login'),
     path('auth/register/', CreateUserAPIView.as_view(), name='auth_user_create'),
     path('auth/logout/', LogoutUserAPIView.as_view(), name='auth_user_logout'),
-    path('bikeOwner/recovery/<str:pk>/', RecoveryUserView.recoveryBikeOwnerUpdateUser, name='bikeOwner_recovery')
+    path('bikeOwner/recovery/<str:pk>/', RecoveryUserView.recoveryBikeOwnerUpdateUser, name='bikeOwner_recovery'),
 
+
+    # Recuperar contraseña en django 2.1 
+    #path('password_reset/',auth_views.PasswordResetView.as_view(),name='password_reset'),
+    path('reset/password_reset/', csrf_exempt(auth_views.PasswordResetView.as_view(template_name='registration/password_reset_form.html', email_template_name='registration/password_reset_email.html')), name="password_reset"),
+    path('reset/password_reset_done/', auth_views.PasswordResetDoneView.as_view(template_name='registration/password_reset_done.html'), name="password_reset_done"),
+    path('reset/password_reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='registration/password_reset_confirm.html'), name='password_reset_confirm'),
+    path('reset/password_reset/done/', auth_views.PasswordResetCompleteView.as_view(template_name='registration/password_reset_complete.html'), name='password_reset_complete'),
+    # si les tira un error tipo ...SMTPAuthenticationError , es muy probable que tengan que 
+    # ir a su cuenta de gmail y habilitar su cuenta para que pueda ser usado por  
+    # ' aplicaciones menos seguras'. eso se hace yendo a su cuenta de google, 
+    # panel de la derecha click en seguridad y habilitan el uso de aplicaciones menos seguras.
 ]

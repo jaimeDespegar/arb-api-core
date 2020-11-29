@@ -107,9 +107,10 @@ class EstadiaView():
 
 
     @api_view(['GET'])
-    def findEstadiasReportesSemanal(request):
+    def findEstadiasReportesSemanal(request,pk_days):
         service = EstadiaService()
-        data = service.generateWeekReport()
+        print("pk_days: ",pk_days)
+        data = service.generateWeekReport(pk_days)
         return Response(data)
 
     @api_view(['GET'])
