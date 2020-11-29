@@ -8,6 +8,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 from ..serializers import CreateUserSerializer
 from ..models import BikeOwner
+from django.contrib.auth.models import User
 import json
 
 class CreateUserAPIView(CreateAPIView):
@@ -15,14 +16,14 @@ class CreateUserAPIView(CreateAPIView):
     permission_classes = [AllowAny]
 
     def create(self, request, *args, **kwargs):
-        print("create!")
+        print("create user")
 
-        newUser = request.data['body']
+        newUser = request.data
         # agregar validacion si existe el userName o email y devolver 500 con mensaje
-        olduser= User.objects.get(username=newUser['username'])
+        olduser= User.objects.filter(username=newUser['username'])
         if(len(olduser) >= 1 ):
             return Response("Error el usuario ya existe", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        oldmail= User.objects.get(email=newUser['email'])
+        oldmail= User.objects.filter(email=newUser['email'])
         if(len(oldmail) >= 1 ):
             return Response("Error el email ya existe", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 

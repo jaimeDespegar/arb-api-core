@@ -55,23 +55,9 @@ class MoveCameraView():
         responseData = []
 
         data0 = BicycleParking.objects.filter(number= 0)[0]
-        print("BicycleParking: ")
-        print(data0)
-
 
         datafinal = Place.objects.create(placeNumber=int(data), 
                                     occupied=False,
                                     bicycleParking=data0)
-        print("Place: ")
-        print(datafinal)
-
-        #serializer = PlaceSerializer(data=datafinal)
-
-        #print(serializer.is_valid())
-        #if serializer.is_valid():
-        #    serializer.save()
-        #    responseData.append(serializer.data)
-        #else:
-        #    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         return Response(responseData, status=status.HTTP_201_CREATED)
