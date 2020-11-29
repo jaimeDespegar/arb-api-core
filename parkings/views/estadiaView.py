@@ -107,9 +107,10 @@ class EstadiaView():
 
 
     @api_view(['GET'])
-    def findEstadiasReportesSemanal(request):
+    def findEstadiasReportesSemanal(request,pk_days):
         service = EstadiaService()
-        data = service.generateWeekReport()
+        print("pk_days: ",pk_days)
+        data = service.generateWeekReport(pk_days)
         return Response(data)
 
     @api_view(['GET'])
@@ -147,4 +148,10 @@ class EstadiaView():
         service = EstadiaService()
         userName = request.query_params.get('userName', None)
         data = service.getStatusStay(userName)
+        return Response(data, status=status.HTTP_200_OK)
+
+    @api_view(['GET'])
+    def cleanOldStadias(request):
+        service = EstadiaService()
+        data = service.desactiveOldEstadias()
         return Response(data, status=status.HTTP_200_OK)

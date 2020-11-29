@@ -160,8 +160,8 @@ class EstadiaService():
     def buildReportStatistics(self):
         return self.reportService.buildReportStatistics(self.findAll(), self.findSuspectEgress())
 
-    def generateWeekReport(self):
-        return self.reportService.generateWeekReport()
+    def generateWeekReport(self, pk_days):
+        return self.reportService.generateWeekReport(pk_days)
 
     def generateAllEstadiaReport(self, pk):
         return self.reportService.generateAllEstadiaReport(pk)

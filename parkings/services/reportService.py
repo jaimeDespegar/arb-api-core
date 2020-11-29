@@ -26,20 +26,36 @@ class ReportService():
         }
         return reportStatistics
 
-    def generateWeekReport(self):
+    def generateWeekReport(self, pk_days):
         now = datetime.datetime.utcnow()
-        lastWeek = now - datetime.timedelta(days=7)
+        lastWeek = now - datetime.timedelta(days=pk_days)
+        #filtro de deteccion de mes
+        #filtro de deteccion de año, se muestran por mes
 
 
         listLastDaysWeek = []
         listOk = []
         listSospechosas = []
 
-        for i in range(7):
-            print("\n\n\n\n")
+        listLastDaysMonth = ["4_semanas","3_semanas","2_semanas","1_semana"]
+        listOkMonth = []
+        listSospechosasMonth = [] 
+        cantSospechosasSemanal= 0
+        cantOkSemanal= 0
+
+        listLastDaysYear= ["12_meses","11_meses","10_meses","9_meses","8_meses","7_meses","6_meses","5_meses","4_meses","3_meses","2_meses","1_mes"]
+        listOkYear = []
+        listSospechosasYear = [] 
+        cantSospechosasMensual= 0
+        cantOkMensual= 0
+
+        count=0
+        for i in range(pk_days):
+            count= i+1
+            print("\n\n")
             #busco desde el día más viejo
-            day1= 7-i
-            day2= 6-i
+            day1= pk_days-i
+            day2= pk_days-1-i
             fromDate = now - datetime.timedelta(days=day1)
             toDate = now - datetime.timedelta(days=day2)
 
@@ -50,8 +66,6 @@ class ReportService():
                                           dateCreated__gte=fromDate)
             cantTotal= 0
             cantSospechosas= 0
-            cantOk= 0
-            Sospechosas=0
             cantTotal = len(totales)
 
             for estadia in totales:
@@ -64,28 +78,63 @@ class ReportService():
                 Sospechosas=0
                 Ok=0
             else:
-                Sospechosas=cantSospechosas
-                Ok= cantTotal - cantSospechosas
+                if(cantSospechosas != 0):
+                    Sospechosas=cantSospechosas
+                    Ok= cantTotal - cantSospechosas
 
-            if(cantTotal != 0):
-                if(cantSospechosas==0):
+                    cantSospechosasSemanal= cantSospechosasSemanal + Sospechosas
+                    cantOkSemanal= cantOkSemanal + Ok
+
+                    cantSospechosasMensual= cantSospechosasMensual + Sospechosas
+                    cantOkMensual= cantOkMensual + Ok
+                else:
                     Ok=cantTotal
+                    cantOkSemanal= cantOkSemanal + cantTotal
+                    cantOkMensual= cantOkMensual + cantTotal
+                    
+            #Mensual
+            if(count%7==0):
+                listOkMonth.append(cantOkSemanal)
+                listSospechosasMonth.append(cantSospechosasSemanal)
+                cantSospechosasSemanal=0
+                cantOkSemanal=0
+
+            #Anual
+            if(count%30==0):
+                listOkYear.append(cantOkMensual)
+                listSospechosasYear.append(cantSospechosasMensual)
+                cantSospechosasMensual=0
+                cantOkMensual=0
 
             listSospechosas.append(Sospechosas)
             listOk.append(Ok)
 
-        reportStatistics = {
-            "listaFechas": listLastDaysWeek,
-            "listaSospechosas": listSospechosas, 
-            "listaOk": listOk 
-        }
-        
+        if(pk_days < 30):
+            reportStatistics = {
+                "listaFechas": listLastDaysWeek,
+                "listaSospechosas": listSospechosas, 
+                "listaOk": listOk 
+            }
+        if(pk_days == 30):
+            reportStatistics = {
+                "listaFechas": listLastDaysMonth,
+                "listaSospechosas": listSospechosasMonth, 
+                "listaOk": listOkMonth 
+            }
+        if(pk_days == 360):
+            reportStatistics = {
+                "listaFechas": listLastDaysYear,
+                "listaSospechosas": listSospechosasYear, 
+                "listaOk": listOkYear 
+            }
+        print(reportStatistics)
         return reportStatistics
 
 ########################################################################
 
     def generateAllEstadiaReport(self, pk):
         #pk=7
+        print("dias: ",pk)
         now = datetime.datetime.utcnow()
         lastWeek = now - datetime.timedelta(days=pk)
 
@@ -332,7 +381,7 @@ class ReportService():
 
     #Se asume que por cada dia hay muchos ingresos y egresos
     def findAllEstadiaReport(self, pk_days):
-        pk_days=7
+        #pk_days=7
         now = datetime.datetime.utcnow()
         lastWeek = now - datetime.timedelta(days=pk_days)
 
@@ -516,7 +565,7 @@ class ReportService():
 
     #Se asume que por cada dia hay muchos ingresos y egresos
     def findAllEstadiaSuspectedAndPeakTimeReport(self, pk_days):
-        pk_days=7
+        #pk_days=7
         now = datetime.datetime.utcnow()
         lastWeek = now - datetime.timedelta(days=pk_days)
 

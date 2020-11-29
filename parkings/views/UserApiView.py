@@ -20,13 +20,21 @@ class CreateUserAPIView(CreateAPIView):
 
         newUser = request.data
         # agregar validacion si existe el userName o email y devolver 500 con mensaje
-        olduser= User.objects.filter(username=newUser['username'])
-        if(len(olduser) >= 1 ):
-            return Response("Error el usuario ya existe", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        oldmail= User.objects.filter(email=newUser['email'])
-        if(len(oldmail) >= 1 ):
-            return Response("Error el email ya existe", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        try:
+            olduser = User.objects.get(username=newUser['username'])
+        except User.DoesNotExist:
+            olduser = None 
+        if (olduser is not None):
+            return Response("Error el usuario ya existe", status=status.HTTP_501_NOT_IMPLEMENTED)
 
+        try:
+            oldmail = User.objects.get(email=newUser['email'])
+        except User.DoesNotExist:
+            oldmail = None 
+        if (oldmail is not None):
+            return Response("Error el email ya existe", status=status.HTTP_503_SERVICE_UNAVAILABLE)
+
+        
         serializer = self.get_serializer(data=newUser)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
