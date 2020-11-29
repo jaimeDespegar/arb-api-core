@@ -133,7 +133,7 @@ EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587 #25
 EMAIL_HOST_USER = 'ppsarbungs2020@gmail.com'
-EMAIL_HOST_PASSWORD = 'ppsarb2020'
+EMAIL_HOST_PASSWORD = 'password'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 CSRF_COOKIE_SECURE = True
