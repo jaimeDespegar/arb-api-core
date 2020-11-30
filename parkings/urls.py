@@ -1,6 +1,7 @@
 from django.urls import path
 from .views import MoveCameraView, BicycleParkingView, EstadiaView, RegisterUserView, NotificationEgressView
 from .views import RegisterUserView, CreateUserAPIView, LogoutUserAPIView, RecoveryUserView, PendingStayView
+from .views import ConfigurationView
 from rest_framework.authtoken.views import obtain_auth_token
 from django.contrib.auth.views import LoginView, PasswordResetView, PasswordResetConfirmView, PasswordResetCompleteView
 from django.contrib.auth import views as auth_views
@@ -73,4 +74,7 @@ urlpatterns = [
     # ir a su cuenta de gmail y habilitar su cuenta para que pueda ser usado por  
     # ' aplicaciones menos seguras'. eso se hace yendo a su cuenta de google, 
     # panel de la derecha click en seguridad y habilitan el uso de aplicaciones menos seguras.
+    path('configuration/<str:key>/', ConfigurationView.getConfigurations, name='configuration-all'),
+    path('configuration/update/<str:key>/', ConfigurationView.updateConfiguration, name='configuration-update')
+
 ]

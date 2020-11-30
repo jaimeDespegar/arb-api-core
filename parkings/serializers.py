@@ -1,7 +1,7 @@
 
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
-from .models import MoveCamera, BicycleParking, Estadia, Segment, NotificationEgress, PendingStay, Place
+from .models import MoveCamera, BicycleParking, Estadia, Segment, NotificationEgress, PendingStay, Place, Configuration
 from .models.user import User, BikeOwner
 
 
@@ -66,4 +66,9 @@ class PendingStaySerializer(serializers.ModelSerializer):
 class PlaceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Place
+        fields = '__all__'
+        
+class ConfigurationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Configuration
         fields = '__all__'
