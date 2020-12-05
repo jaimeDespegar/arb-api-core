@@ -64,13 +64,29 @@ urlpatterns = [
 
 
     # Recuperar contraseña en django 2.1 
-    #path('password_reset/',auth_views.PasswordResetView.as_view(),name='password_reset'),
-    path('reset/password_reset/', csrf_exempt(auth_views.PasswordResetView.as_view(template_name='registration/password_reset_form.html', email_template_name='registration/password_reset_email.html')), name="password_reset"),
-    path('reset/password_reset_done/', auth_views.PasswordResetDoneView.as_view(template_name='registration/password_reset_done.html'), name="password_reset_done"),
-    path('reset/password_reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='registration/password_reset_confirm.html'), name='password_reset_confirm'),
-    path('reset/password_reset/done/', auth_views.PasswordResetCompleteView.as_view(template_name='registration/password_reset_complete.html'), name='password_reset_complete'),
-    # si les tira un error tipo ...SMTPAuthenticationError , es muy probable que tengan que 
-    # ir a su cuenta de gmail y habilitar su cuenta para que pueda ser usado por  
-    # ' aplicaciones menos seguras'. eso se hace yendo a su cuenta de google, 
-    # panel de la derecha click en seguridad y habilitan el uso de aplicaciones menos seguras.
+    #path('reset/password_reset',auth_views.PasswordResetView.as_view(),name='password_reset_form'),
+    ##path('reset/password_reset/', auth_views.PasswordResetView.as_view(template_name='registration/password_reset_form.html', email_template_name='registration/password_reset_email.html'), name="password_reset"),
+    #path('reset/password_reset/', csrf_exempt(auth_views.PasswordResetView.as_view(template_name='registration/password_reset_form.html', email_template_name='registration/password_reset_email.html')), name="password_reset"),
+    ##path('reset/password_reset_done/', auth_views.PasswordResetDoneView.as_view(template_name='registration/password_reset_done.html'), name="password_reset_done"),
+    ##path('reset/password_reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='registration/password_reset_confirm.html'), name='password_reset_confirm'),
+    ##path('reset/password_reset/done/', auth_views.PasswordResetCompleteView.as_view(template_name='registration/password_reset_complete.html'), name='password_reset_complete'),
+                
+
+    path('reset_password/',
+     auth_views.PasswordResetView.as_view(template_name="accounts/password_reset.html"),
+     name="reset_password"),
+
+    path('reset_password_sent/', 
+        auth_views.PasswordResetDoneView.as_view(template_name="accounts/password_reset_sent.html"), 
+        name="password_reset_done"),
+
+    path('reset/<uidb64>/<token>/',
+     auth_views.PasswordResetConfirmView.as_view(template_name="accounts/password_reset_form.html"), 
+     name="password_reset_confirm"),
+
+    path('reset_password_complete/', 
+        auth_views.PasswordResetCompleteView.as_view(template_name="accounts/password_reset_done.html"), 
+        name="password_reset_complete"),
 ]
+
+

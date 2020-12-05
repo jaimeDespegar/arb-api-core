@@ -131,13 +131,16 @@ REST_FRAMEWORK = {
 # con el puerto 587 y habilitando las opciones de gmail de permitir aplicaciones no seguras.
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587 #25
+EMAIL_PORT = 587 #465 #25
 EMAIL_HOST_USER = 'ppsarbungs2020@gmail.com'
 EMAIL_HOST_PASSWORD = 'password'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
+# configuraciones extras para email
 CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SECURE = True
 #CSRF_HEADER_NAME = "HTTP_X_CSRFTOKEN"
+CORS_ALLOW_CREDENTIALS = True
 
