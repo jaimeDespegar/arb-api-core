@@ -65,7 +65,7 @@ urlpatterns = [
 
 
     # Recuperar contraseña en django 2.1 
-<<<<<<< HEAD
+
     #path('reset/password_reset',auth_views.PasswordResetView.as_view(),name='password_reset_form'),
     ##path('reset/password_reset/', auth_views.PasswordResetView.as_view(template_name='registration/password_reset_form.html', email_template_name='registration/password_reset_email.html'), name="password_reset"),
     #path('reset/password_reset/', csrf_exempt(auth_views.PasswordResetView.as_view(template_name='registration/password_reset_form.html', email_template_name='registration/password_reset_email.html')), name="password_reset"),
@@ -89,10 +89,8 @@ urlpatterns = [
     path('reset_password_complete/', 
         auth_views.PasswordResetCompleteView.as_view(template_name="accounts/password_reset_done.html"), 
         name="password_reset_complete"),
-]
 
 
-=======
     #path('password_reset/',auth_views.PasswordResetView.as_view(),name='password_reset'),
     path('reset/password_reset/', csrf_exempt(auth_views.PasswordResetView.as_view(template_name='registration/password_reset_form.html', email_template_name='registration/password_reset_email.html')), name="password_reset"),
     path('reset/password_reset_done/', auth_views.PasswordResetDoneView.as_view(template_name='registration/password_reset_done.html'), name="password_reset_done"),
@@ -106,4 +104,4 @@ urlpatterns = [
     path('configuration/update/<str:key>/', ConfigurationView.updateConfiguration, name='configuration-update')
 
 ]
->>>>>>> fc3472ebdb3e7bd4a7dc523976c992207ca3758e
+
