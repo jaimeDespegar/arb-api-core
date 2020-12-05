@@ -7,7 +7,8 @@ from .UserApiView import CreateUserAPIView, LogoutUserAPIView
 from .NotificationEgressView import NotificationEgressView
 from .RecoveryUserView import RecoveryUserView
 from .PendingStayView import PendingStayView
+from .configurationView import ConfigurationView
 
 __all__ = ['MoveCameraView', 'BicycleParkingView', 'EstadiaView', 
            'RegisterUserView', 'CreateUserAPIView', 'RecoveryUserView',
-           'LogoutUserAPIView', 'NotificationEgressView', 'PendingStayView']
+           'LogoutUserAPIView', 'NotificationEgressView', 'PendingStayView', 'ConfigurationView']

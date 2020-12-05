@@ -7,5 +7,5 @@ class Place(models.Model):
     bicycleParking = models.ForeignKey(BicycleParking, on_delete=models.CASCADE)
 
     def __str__(self):
-        return 'Place number ' + str(self.placeNumber) +', is occupied ' + str(self.occupied)
+        return 'Place ' + str(self.placeNumber) +' - '+self.bicycleParking.description +' - is occupied ' + str(self.occupied)
         
