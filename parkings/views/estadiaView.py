@@ -39,11 +39,17 @@ class EstadiaView():
     def getStateBike(request, pk):
         estadia = Estadia.objects.get(userName=pk, isActive=True)
         #places = Place.objects.filter(placeNumber = estadia.placeUsed)#asumo los lugares son únicos
+        try:
+            segment = Segment.objects.get(estadia=estadia, segmentType='LLEGADA')
+        except Segment.DoesNotExist:
+            segment = None
+            
         place = estadia.place
         stateBike = {
             "description": place.bicycleParking.description,
             "number": place.bicycleParking.number,
-            "placeNumber": place.placeNumber
+            "placeNumber": place.placeNumber,
+            "photo": segment.photoInBase64
         }
         return Response(stateBike)
 

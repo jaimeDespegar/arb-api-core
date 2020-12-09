@@ -8,7 +8,7 @@ from .models.user import User, BikeOwner
 class MovesSerializer(serializers.ModelSerializer):
     class Meta:
         model = MoveCamera
-        fields = ("placeNumber", "occupied", "pathPhoto", "createDate")
+        fields = ("placeNumber", "occupied", "pathPhoto", "createDate", "photoInBase64")
 
 class BicycleParkingSerializer(serializers.ModelSerializer):
     class Meta:

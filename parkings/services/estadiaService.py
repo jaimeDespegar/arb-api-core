@@ -45,6 +45,7 @@ class EstadiaService():
         
         Segment.objects.create(segmentType='LLEGADA', 
                                photoPath=arrivalMove.pathPhoto, 
+                               photoInBase64=arrivalMove.photoInBase64,
                                estadia=anonimo)
         
         #buscar el lugar asociado y ponerlo en False, va a romper!! filtrar con placeNumber
@@ -53,9 +54,10 @@ class EstadiaService():
         print('Estadia anonima creada')
     
     #solo el sgmento de salida (la estadia ya está creada)
-    def createAnonymousStayOUT(self, arrivalMove, estadia):
+    def createAnonymousStayOUT(self, departureMove, estadia):
         Segment.objects.create(segmentType='SALIDA', 
-                               photoPath=arrivalMove.pathPhoto, 
+                               photoPath=departureMove.pathPhoto, 
+                               photoInBase64=departureMove.photoInBase64,
                                estadia=estadia)
         
         #buscar el lugar asociado y ponerlo en False, va a romper!! filtrar con placeNumber
@@ -127,12 +129,14 @@ class EstadiaService():
                 if segment.segmentType == 'LLEGADA':
                     arrival = {
                         'dateCreated': segment.dateCreated,
-                        'photo': segment.photoPath
+                        'photo': segment.photoPath,
+                        'imageBase64': segment.photoInBase64
                     }
                 else:
                     departure = {
                         'dateCreated': segment.dateCreated,
-                        'photo': segment.photoPath
+                        'photo': segment.photoPath,
+                        'imageBase64': segment.photoInBase64
                     }
 
             item = {

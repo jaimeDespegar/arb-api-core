@@ -42,11 +42,11 @@ class PendingStayView():
               'isActive': i.isActive,
               'bicycleParking': {
                 'number': place.bicycleParking.number,
-                'description': place.bicycleParking.description              
+                'description': place.bicycleParking.description
               },
               'photos': {
                 'user': bikeOwner.profilePhoto,
-                'entrance': entrance.photoPath,
+                'entrance': entrance.photoInBase64
               }
             }
             response.append(item)

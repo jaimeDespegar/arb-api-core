@@ -26,7 +26,19 @@ class NotificationEgressView():
     def notificationEgressGetAll(request):
         tasks = NotificationEgress.objects.all()
         serializer = NotificationEgressSerializer(tasks, many=True)
-        return Response(serializer.data)
+        data = []
+        for task in tasks:
+            item = {
+                "dateCreated": task.dateCreated,
+                "isActive": task.isActive,
+                "isSuspected": task.isSuspected,
+                "photoInBase64": task.photoInBase64,
+                "userName": task.userName,
+                "place": task.estadia.place.placeNumber
+            }
+            data.append(item)
+            
+        return Response(data, status=status.HTTP_200_OK)
 
     #Actualiza el estados de casos sospechosos buscando por nombre de usuario
     @api_view(['PUT'])
