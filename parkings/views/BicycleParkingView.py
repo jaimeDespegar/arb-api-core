@@ -24,6 +24,13 @@ class BicycleParkingView():
         return Response(responseData, status=status.HTTP_201_CREATED) 
     
     @api_view(['GET'])
+    def getAllBicycleParking(request):
+        tasks = BicycleParking.objects.all()
+        serializer = BicycleParkingSerializer(tasks, many=True)
+        return Response(serializer.data)
+
+
+    @api_view(['GET'])
     def getBicycleParking(request, pk):
         tasks = BicycleParking.objects.get(id=pk)
         serializer = BicycleParkingSerializer(tasks, many=False)

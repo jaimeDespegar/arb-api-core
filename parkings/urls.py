@@ -10,6 +10,7 @@ from django.views.decorators.csrf import csrf_exempt
 urlpatterns = [
     path('move-create/', MoveCameraView.moveCreate, name="move-create"),
     path('bicycleParking-create/', BicycleParkingView.bicycleParkingCreate, name="bicycleParking-create"),
+    path('bicycleParking-getAll/', BicycleParkingView.getAllBicycleParking, name="bicycleParking-getAll"),
     path('bicycleParking-get/<int:pk>/', BicycleParkingView.getBicycleParking, name="bicycleParking-get"),
     path('bicycleParking-availability/', BicycleParkingView.bicycleParkingAvailability, name="bicycleParkingAvailability"),
     path('bicycleParking-update/', BicycleParkingView.updateBicicleParking, name="bicycleParking-update"),
@@ -17,6 +18,7 @@ urlpatterns = [
     path('bicycleParkingAndPlaces/', BicycleParkingView.getAllBicyclesParkings, name="bicycleParkingAndPlaces"),
     path('movebicycleparking-create/', MoveCameraView.moveBicycleparkingCreate, name="movebicycleparking-create"),
     path('moveplace-create/', MoveCameraView.movePlaceCreate, name="moveplace-create"),
+
 
 
 
