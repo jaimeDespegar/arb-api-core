@@ -10,6 +10,7 @@ from django.views.decorators.csrf import csrf_exempt
 urlpatterns = [
     path('move-create/', MoveCameraView.moveCreate, name="move-create"),
     path('bicycleParking-create/', BicycleParkingView.bicycleParkingCreate, name="bicycleParking-create"),
+    path('bicycleParking-getAll/', BicycleParkingView.getAllBicycleParking, name="bicycleParking-getAll"),
     path('bicycleParking-get/<int:pk>/', BicycleParkingView.getBicycleParking, name="bicycleParking-get"),
     path('bicycleParking-availability/', BicycleParkingView.bicycleParkingAvailability, name="bicycleParkingAvailability"),
     path('bicycleParking-update/', BicycleParkingView.updateBicicleParking, name="bicycleParking-update"),
@@ -17,6 +18,7 @@ urlpatterns = [
     path('bicycleParkingAndPlaces/', BicycleParkingView.getAllBicyclesParkings, name="bicycleParkingAndPlaces"),
     path('movebicycleparking-create/', MoveCameraView.moveBicycleparkingCreate, name="movebicycleparking-create"),
     path('moveplace-create/', MoveCameraView.movePlaceCreate, name="moveplace-create"),
+
 
 
 
@@ -65,6 +67,32 @@ urlpatterns = [
 
 
     # Recuperar contraseña en django 2.1 
+
+    #path('reset/password_reset',auth_views.PasswordResetView.as_view(),name='password_reset_form'),
+    ##path('reset/password_reset/', auth_views.PasswordResetView.as_view(template_name='registration/password_reset_form.html', email_template_name='registration/password_reset_email.html'), name="password_reset"),
+    #path('reset/password_reset/', csrf_exempt(auth_views.PasswordResetView.as_view(template_name='registration/password_reset_form.html', email_template_name='registration/password_reset_email.html')), name="password_reset"),
+    ##path('reset/password_reset_done/', auth_views.PasswordResetDoneView.as_view(template_name='registration/password_reset_done.html'), name="password_reset_done"),
+    ##path('reset/password_reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='registration/password_reset_confirm.html'), name='password_reset_confirm'),
+    ##path('reset/password_reset/done/', auth_views.PasswordResetCompleteView.as_view(template_name='registration/password_reset_complete.html'), name='password_reset_complete'),
+                
+
+    path('reset_password/',
+     auth_views.PasswordResetView.as_view(template_name="accounts/password_reset.html"),
+     name="reset_password"),
+
+    path('reset_password_sent/', 
+        auth_views.PasswordResetDoneView.as_view(template_name="accounts/password_reset_sent.html"), 
+        name="password_reset_done"),
+
+    path('reset/<uidb64>/<token>/',
+     auth_views.PasswordResetConfirmView.as_view(template_name="accounts/password_reset_form.html"), 
+     name="password_reset_confirm"),
+
+    path('reset_password_complete/', 
+        auth_views.PasswordResetCompleteView.as_view(template_name="accounts/password_reset_done.html"), 
+        name="password_reset_complete"),
+
+
     #path('password_reset/',auth_views.PasswordResetView.as_view(),name='password_reset'),
     path('reset/password_reset/', csrf_exempt(auth_views.PasswordResetView.as_view(template_name='registration/password_reset_form.html', email_template_name='registration/password_reset_email.html')), name="password_reset"),
     path('reset/password_reset_done/', auth_views.PasswordResetDoneView.as_view(template_name='registration/password_reset_done.html'), name="password_reset_done"),
@@ -78,3 +106,4 @@ urlpatterns = [
     path('configuration/update/<str:key>/', ConfigurationView.updateConfiguration, name='configuration-update')
 
 ]
+

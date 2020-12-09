@@ -31,7 +31,7 @@ class ReportService():
         lastWeek = now - datetime.timedelta(days=pk_days)
         #filtro de deteccion de mes
         #filtro de deteccion de año, se muestran por mes
-
+        Sospechosas=0
 
         listLastDaysWeek = []
         listOk = []
