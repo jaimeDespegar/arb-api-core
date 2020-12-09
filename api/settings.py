@@ -139,18 +139,18 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 # configuraciones extras para email
 CSRF_COOKIE_SECURE = True
-#CSRF_COOKIE_HTTPONLY = True
+CSRF_COOKIE_HTTPONLY = True
 #SESSION_COOKIE_SECURE = True
 #CSRF_HEADER_NAME = "HTTP_X_CSRFTOKEN"
 #CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_CREDENTIALS = True
-CORS_ORIGIN_WHITELIST = (
-        'http://localhost:3000',        
-)
-CORS_ALLOW_HEADERS = (
-    'csrftoken',
-    'content-type',
-    'X-CSRFTOKEN'
-)
-CSRF_COOKIE_NAME = "csrftoken"
-CSRF_HEADER_NAME = 'X-CSRFTOKEN'
+#CORS_ALLOW_CREDENTIALS = True
+#CORS_ORIGIN_WHITELIST = (
+#        'http://localhost:3000',        
+#)
+#CORS_ALLOW_HEADERS = (
+#    'csrftoken',
+#    'content-type',
+#    'X-CSRFTOKEN'
+#)
+#CSRF_COOKIE_NAME = "csrftoken"
+#CSRF_HEADER_NAME = 'X-CSRFTOKEN'
