@@ -6,10 +6,7 @@ class BicycleParkingService:
         parkings = BicycleParkingDao().getAll()
         response = []
         for p in parkings:
-            filters = {
-                'bicycleParking__exact': p
-            }
-            places = PlaceDao().findByFilters(filters)
+            places = PlaceDao().filter({ 'bicycleParking__exact': p })
             freePlaces = 0
             for place in places:
                 if not place.occupied:
@@ -27,20 +24,12 @@ class BicycleParkingService:
         parkings = BicycleParkingDao().getAll()
         response = []
         for p in parkings:
-            filters = {
-                'bicycleParking__exact': p
-            }
-            places = PlaceDao().findByFilters(filters)
-            
+            places = PlaceDao().filter({ 'bicycleParking__exact': p })
             placesAux = []
             for place in places:
-                
                 if (place.occupied):
-                    filtersStay = {
-                        "place__exact": place,
-                        "isActive__exact": True 
-                    }
-                    stay = StayDao().getByFilters(filtersStay)
+                    filtersStay = { "place__exact": place, "isActive__exact": True }
+                    stay = StayDao().get(filtersStay)
                     if (stay is not None and stay.isAnonymous):
                         dateAssociatedStay = stay.dateCreated
                     else:

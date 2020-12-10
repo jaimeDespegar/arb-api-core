@@ -3,5 +3,8 @@ from ..models import Place
 
 class PlaceDao:
     
-    def findByFilters(self, filters):
+    def filter(self, filters):
         return Place.objects.filter(**filters)
+    
+    def get(self, filters):
+        return Place.objects.get(**filters)
