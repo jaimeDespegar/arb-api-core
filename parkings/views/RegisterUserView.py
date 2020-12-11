@@ -3,7 +3,6 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from ..serializers import UserSerializer, BikeOwnerSerializer, CreateUserSerializer
 from ..services import UserService
-from django.contrib.auth.models import User
 
 
 class RegisterUserView():
@@ -61,10 +60,7 @@ class RegisterUserView():
         filters = {}
 
         if (username is not None):
-            try:
-                user = service.getUser({"username__exact":username})
-            except User.DoesNotExist:
-                user = None 
+            user = service.getUser({"username__exact": username})    
             if (user is not None):
                 filters['user__exact'] = user
 
@@ -112,16 +108,9 @@ class RegisterUserView():
         userEdited = request.data
         service = UserService()
         
-        try:
-            user = service.getUser({"username__exact": pk})
-        except User.DoesNotExist:
-            user = None 
-
-        try:
-            oldmail = service.getUser({"username__exact":pk, "email__exact":userEdited['email']})
-        except User.DoesNotExist:
-            oldmail = None
-            
+        user = service.getUser({"username__exact": pk})
+        oldmail = service.getUser({"username__exact":pk, "email__exact":userEdited['email']})
+                    
         if (oldmail == None):
             return Response("Error el email ya existe", status=status.HTTP_404_NOT_FOUND)#status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
