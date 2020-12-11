@@ -17,3 +17,6 @@ class UserService:
     
     def getAllBikeOwner(self):
         return self.userDao.getAllBikeOwner()
+
+    def createBikeOwner(self, newBikeOwner):
+        self.userDao.createBikeOwner(newBikeOwner)

@@ -14,4 +14,10 @@ class UserDao:
         return BikeOwner.objects.all()
     
     def getUser(self, filters):
-        return User.objects.get(**filters)
+        try:
+            return User.objects.get(**filters)
+        except User.DoesNotExist:
+            return None
+
+    def createBikeOwner(self, newBikeOwner):
+        BikeOwner.objects.create(**newBikeOwner)
