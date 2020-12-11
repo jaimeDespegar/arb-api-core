@@ -123,7 +123,7 @@ class RegisterUserView():
             oldmail = None
             
         if (oldmail == None):
-            return Response("Error el email ya existe", status=status.HTTP_503_SERVICE_UNAVAILABLE)
+            return Response("Error el email ya existe", status=status.HTTP_404_NOT_FOUND)#status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
         bikeOwner = service.getBikeOwner({"user__exact": user})
         user.email = userEdited["email"]

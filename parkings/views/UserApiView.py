@@ -22,12 +22,12 @@ class CreateUserAPIView(CreateAPIView):
         olduser = service.getUser({"username__exact": newUser['username']})
 
         if (olduser is not None):
-            return Response("Error el usuario ya existe", status=status.HTTP_501_NOT_IMPLEMENTED)
+            return Response("Error el usuario ya existe", status=status.HTTP_404_NOT_FOUND)#status=status.HTTP_501_NOT_IMPLEMENTED)
 
         oldmail = service.getUser({"email__exact": newUser['email']})
         
         if (oldmail is not None):
-            return Response("Error el email ya existe", status=status.HTTP_503_SERVICE_UNAVAILABLE)
+            return Response("Error el email ya existe", status=status.HTTP_404_NOT_FOUND)#status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
         serializer = self.get_serializer(data=newUser)
         serializer.is_valid(raise_exception=True)
