@@ -1,11 +1,8 @@
 from rest_framework import status
 from rest_framework.decorators import api_view
-from django.http import JsonResponse
 from rest_framework.response import Response
-from ..serializers import MovesSerializer, BicycleParkingSerializer, PlaceSerializer
-import time
-from ..models import MoveCamera, NotificationEgress, Estadia, BicycleParking, Place
-from ..services import EstadiaService
+from ..serializers import MovesSerializer, BicycleParkingSerializer
+from ..services import EstadiaService, BicycleParkingService, NotificationEgressService
 
 
 class MoveCameraView():
@@ -20,12 +17,12 @@ class MoveCameraView():
             if serializer.is_valid():
                 moveSaved = serializer.save()
                 if (moveSaved.occupied): #Debería ser al revés!! ver en camera detection!                    
-                    estadiaFinal = Estadia.objects.filter(placeUsed= moveSaved.placeNumber)[0]
-                    service.createAnonymousStayOUT(moveSaved, estadiaFinal)
+                    stay = service.filter({"placeUsed__exact":moveSaved.placeNumber})[0]
+                    service.createAnonymousStayOUT(moveSaved, stay)
                     
-                    NotificationEgress.objects.create(userName=estadiaFinal.userName, 
-                                                      estadia=estadiaFinal,
-                                                      photoInBase64=moveSaved.photoInBase64)
+                    NotificationEgressService().create({"userName": stay.userName, 
+                                                        "estadia": stay,
+                                                        "photoInBase64": moveSaved.photoInBase64})
                 else:
                     service.createAnonymousStay(moveSaved)
                     
@@ -54,11 +51,11 @@ class MoveCameraView():
     def movePlaceCreate(request):
         data = request.data
         responseData = []
+        service = BicycleParkingService()
+        data0 = service.filter({"number__exact": 0})[0]
 
-        data0 = BicycleParking.objects.filter(number= 0)[0]
-
-        datafinal = Place.objects.create(placeNumber=int(data), 
-                                    occupied=False,
-                                    bicycleParking=data0)
+        datafinal = service.createPlace({"placeNumber": int(data), 
+                                         "occupied": False,
+                                         "bicycleParking": data0})
 
         return Response(responseData, status=status.HTTP_201_CREATED)

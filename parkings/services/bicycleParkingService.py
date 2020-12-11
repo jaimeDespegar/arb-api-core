@@ -52,3 +52,18 @@ class BicycleParkingService:
             response.append(bicycleAndPlace)
 
         return response
+    
+    def getAll():
+        return BicycleParkingDao().getAll()
+    
+    def get(filters):
+        return BicycleParkingDao().getByFilters(filters)
+    
+    def filter(self, filters):
+        return BicycleParkingDao().filter(filters)    
+    
+    def createPlace(self, place):
+        PlaceDao().insert(place)
+    
+    def getPlace(self, filters):
+        return PlaceDao().get(filters)

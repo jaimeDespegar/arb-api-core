@@ -8,3 +8,6 @@ class PlaceDao:
     
     def get(self, filters):
         return Place.objects.get(**filters)
+    
+    def insert(self, newPlace):
+        Place.objects.create(**newPlace)

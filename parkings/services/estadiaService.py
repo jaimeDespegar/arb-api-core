@@ -19,7 +19,10 @@ class EstadiaService():
     def findAll(self):
         items = self.stayDao.getAll()
         return self.parseEstadias(items)
-        
+    
+    def filter(self, filters):
+        return self.stayDao.filter(filters)
+            
     def findByFilters(self, filters, isSuspected):
         estadias = self.stayDao.filter(filters)
         staysFiltered = []
@@ -192,3 +195,6 @@ class EstadiaService():
             if(estadia.dateCreated.strftime("%x")!= now.strftime("%x")):
                 estadia.isActive=False
                 estadia.save()
+                
+    def get(self, filters):
+        return self.stayDao.get(filters)
