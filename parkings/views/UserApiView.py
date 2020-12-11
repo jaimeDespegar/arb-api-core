@@ -35,7 +35,6 @@ class CreateUserAPIView(CreateAPIView):
     
         headers = self.get_success_headers(serializer.data)
 
-        # create bikeowner
         service.createBikeOwner({"bicyclePhoto": newUser['bicyclePhoto'],
                                  "profilePhoto": newUser['profilePhoto'],
                                  "pet": newUser['pet'],
