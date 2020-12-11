@@ -25,14 +25,14 @@ class CreateUserAPIView(CreateAPIView):
         except User.DoesNotExist:
             olduser = None 
         if (olduser is not None):
-            return Response("Error el usuario ya existe", status=status.HTTP_501_NOT_IMPLEMENTED)
+            return Response("Error el usuario ya existe", status=status.HTTP_404_NOT_FOUND)#status=status.HTTP_501_NOT_IMPLEMENTED)
 
         try:
             oldmail = User.objects.get(email=newUser['email'])
         except User.DoesNotExist:
             oldmail = None 
         if (oldmail is not None):
-            return Response("Error el email ya existe", status=status.HTTP_503_SERVICE_UNAVAILABLE)
+            return Response("Error el email ya existe", status=status.HTTP_404_NOT_FOUND)#status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
         
         serializer = self.get_serializer(data=newUser)
