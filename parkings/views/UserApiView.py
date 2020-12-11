@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 from ..serializers import CreateUserSerializer
 from ..models import BikeOwner
 from django.contrib.auth.models import User
-import json
+
 
 class CreateUserAPIView(CreateAPIView):
     serializer_class = CreateUserSerializer

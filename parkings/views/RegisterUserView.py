@@ -1,9 +1,8 @@
 from rest_framework import status
 from rest_framework.decorators import api_view
-from django.http import JsonResponse
 from rest_framework.response import Response
 from ..serializers import UserSerializer, BikeOwnerSerializer, CreateUserSerializer
-from ..models.user import BikeOwner
+from ..services import UserService
 from django.contrib.auth.models import User
 
 
@@ -27,14 +26,14 @@ class RegisterUserView():
     # GET trae todas 
     @api_view(['GET'])
     def registerBikeOwnerGetAll(request):
-        tasks = BikeOwner.objects.all()
+        tasks = UserService().getAllBikeOwner()
         serializer = BikeOwnerSerializer(tasks, many=True)
         return Response(serializer.data)
 
     # GET trae todas 
     @api_view(['GET'])
     def parseBikeOwnerGetAll(request):
-        owners = BikeOwner.objects.all()
+        owners = UserService().getAllBikeOwner()
 
         listBikeOwner = []
         
@@ -51,26 +50,26 @@ class RegisterUserView():
             }
             
             listBikeOwner.append(userResponse)
-        print(listBikeOwner)
+            
         return Response(listBikeOwner)
 
     @api_view(['GET'])
     def parseBikeOwnerFind(request):
         username = request.query_params.get('user.username', None)#userName
-        print("usernameFind: ",username)
+        service = UserService()
+        
         filters = {}
 
         if (username is not None):
             try:
-                user = User.objects.get(username=username)
+                user = service.getUser({"username__exact":username})
             except User.DoesNotExist:
                 user = None 
             if (user is not None):
                 filters['user__exact'] = user
 
-        owners = BikeOwner.objects.filter(**filters)
-        print("owners: ",owners)
-
+        owners = service.getBikeOwnerByFilters(filters)
+        
         listBikeOwner = []
         
         for owner in owners:
@@ -86,21 +85,15 @@ class RegisterUserView():
             }
             
             listBikeOwner.append(userResponse)
-        print(listBikeOwner)
+        
         return Response(listBikeOwner)
     
-    # GET trae por id 
-    @api_view(['GET'])
-    def registerBikeOwnerGet(request, pk):
-        tasks = BikeOwner.objects.get(id=pk)
-        serializer = BikeOwnerSerializer(tasks, many=False)
-        return Response(serializer.data)
-
-    # GET trae por id 
+    
     @api_view(['GET'])
     def registerBikeOwnerGetUser(request, pk):
-        user = User.objects.get(username=pk)
-        owner = BikeOwner.objects.get(user=user)
+        service = UserService()
+        user = service.getUser({"username__exact": pk})
+        owner = service.getBikeOwner({"user__exact": user})
         userResponse = {
             'username': user.username,
             "email": user.email,
@@ -117,22 +110,22 @@ class RegisterUserView():
     @api_view(['PUT'])
     def registerBikeOwnerUpdateUser(request, pk):
         userEdited = request.data
-
+        service = UserService()
+        
         try:
-            user = User.objects.get(username=pk)
+            user = service.getUser({"username__exact": pk})
         except User.DoesNotExist:
             user = None 
 
         try:
-            oldmail = User.objects.get(username=pk, email=userEdited['email'])
+            oldmail = service.getUser({"username__exact":pk, "email__exact":userEdited['email']})
         except User.DoesNotExist:
-            oldmail = None 
+            oldmail = None
+            
         if (oldmail == None):
             return Response("Error el email ya existe", status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
-
-
-        bikeOwner = BikeOwner.objects.get(user=user)
+        bikeOwner = service.getBikeOwner({"user__exact": user})
         user.email = userEdited["email"]
         user.set_password(userEdited["password"])
         user.save()
@@ -149,6 +142,6 @@ class RegisterUserView():
 
     @api_view(['DELETE'])
     def bikeOwnerDelete(request, pk):
-        user = User.objects.get(username=pk)
+        user = UserService().getUser({"username__exact": pk})
         user.delete()
         return Response("user borrado satisfactoriamente")
