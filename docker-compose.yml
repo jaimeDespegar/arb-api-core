@@ -2,24 +2,20 @@ version: '3'
 
 services:
   db:
-    image: postgres
+    image: mysql:5.7
+    ports:
+      - '3306:3306'
     environment:
-      - POSTGRES_DB=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+       MYSQL_DATABASE: 'parkings'
+       MYSQL_USER: 'admin'
+       MYSQL_PASSWORD: 'admin'
+       MYSQL_ROOT_PASSWORD: 'admin'
   web:
     build: .
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
-      - .:/code
+      - .:/my_app_dir
     ports:
-      - '8000:8000'
+      - "8000:8000"
     depends_on:
       - db
-      
-  sqlite3:
-    image: nouchka/sqlite3:latest
-    stdin_open: true
-    tty: true
-    volumes:
-      - ./db/:/root/db/
