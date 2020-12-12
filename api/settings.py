@@ -8,12 +8,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'c@2#nf0s+20&dlmp-!c%hh)wn+7k8zo3f3)bu_5j#lme4t173f'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False #True (origen)
 
 ALLOWED_HOSTS = ['*']
 
 
-# Application definition
+
 
 INSTALLED_APPS = [
     'django.contrib.sites',  # <-------------*
@@ -81,6 +81,30 @@ DATABASES = {
     }
 }
 
+
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.mysql',
+#        'NAME': 'nombreDB',
+#        'USER' : 'root',
+#        'PASSWORD' : 'root',
+#        'HOST' : 'localhost',
+#        'PORT' : ''
+#    }
+#}
+
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.postgresql',
+#        'NAME': 'postgres',
+#        'USER': 'postgres',
+#        'PASSWORD' : 'postgres',
+#        'HOST': 'db',
+#        'PORT': 5432
+#    }
+#}
+
+
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
 
@@ -115,6 +139,7 @@ USE_TZ = True
 
 
 STATIC_URL = '/static/'
+STATIC_ROOT = '/code/static/' #nuevo para docker
 
 SITE_ID=1
 
