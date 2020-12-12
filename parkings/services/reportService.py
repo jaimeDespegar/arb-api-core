@@ -1,10 +1,15 @@
-from ..models import Estadia, Segment, NotificationEgress
 import time
 import datetime
 from collections import Counter
+from ..daos import SegmentDao, StayDao, NotificationEgressDao
 
 
 class ReportService():
+    
+    def __init__(self):
+        self.segmentDao = SegmentDao()
+        self.notificationEgressDao = NotificationEgressDao()
+        self.stayDao = StayDao()
     
     def buildReportStatistics(self, totalesAll, suspectEgress):
         cantTotal= 0
@@ -62,15 +67,14 @@ class ReportService():
             listLastDaysWeek.append(toDate.strftime("%a %x"))
             
 
-            totales = Estadia.objects.filter(dateCreated__lte=toDate, 
-                                          dateCreated__gte=fromDate)
+            totales = self.stayDao.filter({"dateCreated__lte": toDate, 
+                                          "dateCreated__gte": fromDate})
             cantTotal= 0
             cantSospechosas= 0
             cantTotal = len(totales)
 
             for estadia in totales:
-                sospechosa = NotificationEgress.objects.filter(isSuspected=True,estadia=estadia)
-                #if(sospechosa != None):
+                sospechosa = self.notificationEgressDao.filter({"isSuspected__exact": True, "estadia__exact": estadia})
                 if(len(sospechosa)>=1):
                     cantSospechosas= cantSospechosas +1
 
@@ -127,14 +131,13 @@ class ReportService():
                 "listaSospechosas": listSospechosasYear, 
                 "listaOk": listOkYear 
             }
-        print(reportStatistics)
+        
         return reportStatistics
 
 ########################################################################
 
     def generateAllEstadiaReport(self, pk):
         #pk=7
-        print("dias: ",pk)
         now = datetime.datetime.utcnow()
         lastWeek = now - datetime.timedelta(days=pk)
 
@@ -151,9 +154,9 @@ class ReportService():
             fromDate = now - datetime.timedelta(days=day1)
             toDate = now - datetime.timedelta(days=day2)
 
-            totales = Segment.objects.filter(dateCreated__lte=toDate, 
-                                          dateCreated__gte=fromDate,
-                                          segmentType= "SALIDA")
+            totales = self.segmentDao.filter({"dateCreated__lte": toDate, 
+                                              "dateCreated__gte": fromDate,
+                                              "segmentType__exact": "SALIDA"})
 
             cantIngresosTM=0
             cantIngresosTT=0
@@ -169,7 +172,7 @@ class ReportService():
 
                 horaIngreso=int(segment.estadia.dateCreated.strftime("%H"))
                 horaEgreso= int(segment.dateCreated.strftime("%H"))
-                sospechosa = NotificationEgress.objects.filter(isSuspected=True,estadia=segment.estadia)
+                sospechosa = self.notificationEgressDao.filter({"isSuspected__exact": True, "estadia__exact": segment.estadia})
 
                 #Ingreso
                 if(horaIngreso>=7 and horaIngreso<=13):
@@ -215,7 +218,7 @@ class ReportService():
             "listEgress": listEgress,
             "listEgressSuspected": listEgressSuspected,
         }
-        print(reportStatistics)
+
         return reportStatistics
 
 ########################################################################
@@ -275,12 +278,9 @@ class ReportService():
 
     #Se asume que un usuario puede tener solo 1 estadía por día
     def findUserEstadiaReport(self, pk, pk_days):
-        print("pk: ",pk)
-        print("pk_days: ",pk_days)
         #pk_days=7
         now = datetime.datetime.utcnow()
         lastWeek = now - datetime.timedelta(days=pk_days)
-
 
         listDaysWeek = ["LU","MA","MI","JU","VI","SA"]
         #general
@@ -288,22 +288,21 @@ class ReportService():
         listEgress = []
 
         for i in range(pk_days):
-            print("\n\n\n\n")
             day1= pk_days-i
             day2= pk_days-1-i
             fromDate = now - datetime.timedelta(days=day1)
             toDate = now - datetime.timedelta(days=day2)
 
-            estadiaUser = Estadia.objects.filter(dateCreated__lte=toDate, 
-                                          dateCreated__gte=fromDate,
-                                          userName= pk)
-            print("estadiaUser:")
+            estadiaUser = self.stayDao.filter({"dateCreated__lte": toDate, 
+                                               "dateCreated__gte": fromDate,
+                                               "userName__exact": pk})
             print(estadiaUser)
-            print("len(estadiaUser) :", len(estadiaUser) )
             if(len(estadiaUser) == 1):
-                segmentUser = Segment.objects.filter(segmentType= "SALIDA",
-                                          estadia= estadiaUser[0])[0]
-                print(segmentUser)
+                segmentUserList = self.segmentDao.filter({"segmentType__exact": "SALIDA",
+                                          "estadia__exact": estadiaUser[0]})
+                
+                segmentUser = segmentUserList[0] if len(segmentUserList)>0 else None
+
                 if(segmentUser is not None):
                     horaIngreso=int(segmentUser.estadia.dateCreated.strftime("%H"))
                     horaEgreso= int(segmentUser.dateCreated.strftime("%H"))
@@ -326,7 +325,8 @@ class ReportService():
                     if(segmentUser.estadia.dateCreated.strftime("%A")=="Saturday"): 
                         ReportService.listEntranceSabado.append(horaIngreso)
                         ReportService.listEgressSabado.append(horaEgreso)
-        
+                else:
+                    print("La estadia no tiene cargada el segmento de Salida")
         #Validación de listas NO vacías
         self.valdateListNotEmpty()
 
@@ -367,7 +367,6 @@ class ReportService():
             "listEntrance": listEntrance, 
             "listEgress": listEgress,
         }
-        print(reportStatistics)
 
         reportStatistics3 = {
             "modo": "Ingresos",
@@ -408,15 +407,14 @@ class ReportService():
         listEgress = []
 
         for i in range(pk_days):
-            print("\n\n\n\n")
             day1= pk_days-i
             day2= pk_days-1-i
             fromDate = now - datetime.timedelta(days=day1)
             toDate = now - datetime.timedelta(days=day2)
 
-            totales= Segment.objects.filter(dateCreated__lte=toDate, 
-                                          dateCreated__gte=fromDate,
-                                          segmentType= "SALIDA")
+            totales= self.segmentDao.filter({"dateCreated__lte": toDate, 
+                                             "dateCreated__gte": fromDate,
+                                             "segmentType__exact": "SALIDA"})
             for segmentUser in totales:
                 horaIngreso=int(segmentUser.estadia.dateCreated.strftime("%H"))
                 horaEgreso= int(segmentUser.dateCreated.strftime("%H"))
@@ -482,64 +480,9 @@ class ReportService():
             "listEntrance": listEntranceFinal, 
             "listEgress": listEgressFinal,
         }
-        print(reportStatistics)
+        
         self.cleanListDaysEntranceAndEgress()
         return reportStatistics
-
-########################################################################
-
-    #Se asume que un usuario puede tener solo 1 estadía por día
-#    def findPromedioHourEstadiaReport(self):
-#        pk_days=7
-#        now = datetime.datetime.utcnow()
-#        lastWeek = now - datetime.timedelta(days=pk_days)
-#
-#        listLastDaysWeek = []
-#        listEntrance = []
-#        listEgress = []
-#
-#        for i in range(pk_days):
-#            listEntranceDay = []
-#            listEgressDay = []
-#            print("\n\n\n\n")
-#            day1= pk_days-i
-#            day2= pk_days-1-i
-#            fromDate = now - datetime.timedelta(days=day1)
-#            toDate = now - datetime.timedelta(days=day2)
-#
-#            totales = Segment.objects.filter(dateCreated__lte=toDate, 
-#                                          dateCreated__gte=fromDate,
-#                                          segmentType= "SALIDA")
-#            
-#            for segment in totales:
-#                horaIngreso=int(segment.estadia.dateCreated.strftime("%H"))
-#                listEntranceDay.append(horaIngreso)
-#                horaEgreso= int(segment.dateCreated.strftime("%H"))
-#                listEgressDay.append(horaEgreso)
-#
-#            sumEntrance=0.0
-#            for i in range(0,len(listEntranceDay)):
-#                sumEntrance=sumEntrance+listEntranceDay[i]
-#            horaIngresoPromedio= sumEntrance/len(listEntranceDay)
-#
-#            sumEgress=0.0
-#            for i in range(0,len(listEgressDay)):
-#                sumEgress=sumEgress+listEgressDay[i]
-#            horaEgresoPromedio= sumEgress/len(listEgressDay)
-#
-#            listLastDaysWeek.append(toDate.strftime("%d"))
-#            listEntrance.append(horaIngresoPromedio)
-#            listEgress.append(horaEgresoPromedio)
-#        reportStatistics = {
-#            "listLastDaysWeek": listLastDaysWeek,
-#            "listEntrance": listEntrance, 
-#            "listEgress": listEgress,
-#        }
-#        
-#        return reportStatistics
-
-########################################################################
-
 
 ########################################################################
 
@@ -570,22 +513,21 @@ class ReportService():
         listEgressSuspectedSabado = []
 
         for i in range(pk_days):
-            print("\n\n\n\n")
             day1= pk_days-i
             day2= pk_days-1-i
             fromDate = now - datetime.timedelta(days=day1)
             toDate = now - datetime.timedelta(days=day2)
 
-            totales= Segment.objects.filter(dateCreated__lte=toDate, 
-                                          dateCreated__gte=fromDate,
-                                          segmentType= "LLEGADA")
+            totales= self.segmentDao.filter({"dateCreated__lte": toDate, 
+                                             "dateCreated__gte": fromDate,
+                                             "segmentType__exact": "LLEGADA"})
 
             for segmentUser in totales:
                 horaIngreso=int(segmentUser.estadia.dateCreated.strftime("%H"))
                 horaEgreso= int(segmentUser.dateCreated.strftime("%H"))
                 listaRangoDeUso= list(range(horaIngreso,horaEgreso+1))
-                sospechosa = NotificationEgress.objects.filter(isSuspected=True,
-                                                    estadia=segmentUser.estadia)
+                sospechosa = self.notificationEgressDao.filter({"isSuspected__exact": True,
+                                                    "estadia__exact": segmentUser.estadia})
 
                 if(segmentUser.estadia.dateCreated.strftime("%A")=="Monday"): 
                     listHoursParkingLunes=listHoursParkingLunes+listaRangoDeUso
@@ -680,5 +622,5 @@ class ReportService():
             "listHoursParkingFinal": listHoursParkingFinal, 
             "listEgressSuspectedFinal": listEgressSuspectedFinal,
         }
-        print(reportStatistics)
+        
         return reportStatistics

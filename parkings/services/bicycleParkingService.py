@@ -1,12 +1,12 @@
-from ..models import BicycleParking, Place, Estadia
+from ..daos import BicycleParkingDao, PlaceDao, StayDao
 
 class BicycleParkingService:
 
     def getCountFreePlaces():
-        parkings = BicycleParking.objects.all()
+        parkings = BicycleParkingDao().getAll()
         response = []
         for p in parkings:
-            places = Place.objects.filter(bicycleParking=p)
+            places = PlaceDao().filter({ 'bicycleParking__exact': p })
             freePlaces = 0
             for place in places:
                 if not place.occupied:
@@ -21,21 +21,18 @@ class BicycleParkingService:
         return response
 
     def getAllBicycleParkingAndPlaces():
-        parkings = BicycleParking.objects.all()
+        parkings = BicycleParkingDao().getAll()
         response = []
         for p in parkings:
-            places = Place.objects.filter(bicycleParking=p)
+            places = PlaceDao().filter({ 'bicycleParking__exact': p })
             placesAux = []
             for place in places:
-                
                 if (place.occupied):
-                    try:
-                        stay = Estadia.objects.get(place=place, isActive=True)
-                        if (stay.isAnonymous):
-                            dateAssociatedStay = stay.dateCreated
-                        else:
-                            dateAssociatedStay = ''
-                    except Estadia.DoesNotExist:
+                    filtersStay = { "place__exact": place, "isActive__exact": True }
+                    stay = StayDao().get(filtersStay)
+                    if (stay is not None and stay.isAnonymous):
+                        dateAssociatedStay = stay.dateCreated
+                    else:
                         dateAssociatedStay = ''
                 else:
                     dateAssociatedStay = ''
@@ -55,3 +52,18 @@ class BicycleParkingService:
             response.append(bicycleAndPlace)
 
         return response
+    
+    def getAll():
+        return BicycleParkingDao().getAll()
+    
+    def get(self, filters):
+        return BicycleParkingDao().getByFilters(filters)
+    
+    def filter(self, filters):
+        return BicycleParkingDao().filter(filters)    
+    
+    def createPlace(self, place):
+        PlaceDao().insert(place)
+    
+    def getPlace(self, filters):
+        return PlaceDao().get(filters)

@@ -2,11 +2,9 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from ..serializers import SegmentSerializer, EstadiaSerializer
-from ..models import Estadia, Segment, Place, BicycleParking, BikeOwner
-from ..services import EstadiaService
+from ..services import EstadiaService, SegmentService
 from django.core import serializers
-from django.contrib.auth.models import User
-import datetime
+
 
 class EstadiaView():
 
@@ -27,31 +25,30 @@ class EstadiaView():
         if (isActive is not None):
             filters['isActive__exact'] = isActive.lower() == 'true'
 
-        try:
-            items = Estadia.objects.get(**filters)
+        items = EstadiaService().get(filters)
+        if (items is not None):
             serializer = EstadiaSerializer(items, many=False)
             return Response(serializer.data)
-        except Estadia.DoesNotExist:
+        else :
             return Response({'message': 'Error Stay Not Found.'}, status=status.HTTP_404_NOT_FOUND)
             
 
     @api_view(['GET'])
     def getStateBike(request, pk):
-        estadia = Estadia.objects.get(userName=pk, isActive=True)
-        #places = Place.objects.filter(placeNumber = estadia.placeUsed)#asumo los lugares son únicos
-        try:
-            segment = Segment.objects.get(estadia=estadia, segmentType='LLEGADA')
-        except Segment.DoesNotExist:
-            segment = None
-            
-        place = estadia.place
-        stateBike = {
-            "description": place.bicycleParking.description,
-            "number": place.bicycleParking.number,
-            "placeNumber": place.placeNumber,
-            "photo": segment.photoInBase64
-        }
-        return Response(stateBike)
+        estadia = EstadiaService().get({"userName__exact":pk, "isActive__exact":True})
+        if (estadia is not None):
+            segment = SegmentService().get({"estadia__exact":estadia, "segmentType__exact":'LLEGADA'})
+                        
+            place = estadia.place
+            stateBike = {
+                "description": place.bicycleParking.description,
+                "number": place.bicycleParking.number,
+                "placeNumber": place.placeNumber,
+                "photo": segment.photoInBase64 if segment is not None else ''
+            }
+            return Response(stateBike)
+        else:
+            return Response({'message': 'Error Stay Not Found.'}, status=status.HTTP_404_NOT_FOUND)
 
     @api_view(['POST'])
     def createStayEntrance(request):

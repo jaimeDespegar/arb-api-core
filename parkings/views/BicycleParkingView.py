@@ -3,8 +3,6 @@ from rest_framework.decorators import api_view
 from django.http import JsonResponse
 from rest_framework.response import Response
 from ..serializers import BicycleParkingSerializer
-from ..models.bicycleParking import BicycleParking
-from ..models.place import Place
 from ..services.bicycleParkingService import BicycleParkingService
 
 class BicycleParkingView():
@@ -25,14 +23,14 @@ class BicycleParkingView():
     
     @api_view(['GET'])
     def getAllBicycleParking(request):
-        tasks = BicycleParking.objects.all()
+        tasks = BicycleParkingService.getAll()
         serializer = BicycleParkingSerializer(tasks, many=True)
         return Response(serializer.data)
 
 
     @api_view(['GET'])
     def getBicycleParking(request, pk):
-        tasks = BicycleParking.objects.get(id=pk)
+        tasks = BicycleParkingService.get({"id__exact":pk})
         serializer = BicycleParkingSerializer(tasks, many=False)
         return Response(serializer.data)
 
@@ -43,7 +41,7 @@ class BicycleParkingView():
 
     @api_view(['PUT'])
     def updateBicicleParking(request):
-        parking = BicycleParking.objects.get(number=request.data['number'])
+        parking = BicycleParkingService.get({"number__exact": request.data['number']})
         serializer = BicycleParkingSerializer(instance=parking, data=request.data)
         
         if serializer.is_valid():
@@ -56,7 +54,7 @@ class BicycleParkingView():
 
     @api_view(['DELETE'])
     def bicicleParkingDelete(request, number):
-        parking = BicycleParking.objects.get(number=number)
+        parking = BicycleParkingService.get({"number__exact": number})
         parking.delete()
         return Response("Parking borrado satisfactoriamente", status=status.HTTP_200_OK)
 

@@ -1,8 +1,8 @@
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from ..models import Segment, PendingStay, BikeOwner, Place, BicycleParking, Estadia 
-from django.contrib.auth.models import User
+from ..services import EstadiaService, PendingStayService, BicycleParkingService
+from ..services import SegmentService, UserService
 
 
 class PendingStayView():
@@ -25,15 +25,16 @@ class PendingStayView():
         if (notifyToUser is not None):
             filters['notifyToUser__exact'] = notifyToUser
             
-        items = PendingStay.objects.filter(**filters)
+        items = PendingStayService().filter(filters)
 
         response = []
-        
+        segmentService = SegmentService()
+        userService = UserService()
         for i in items:
             place=i.stay.place
-            entrance = Segment.objects.get(estadia=i.stay, segmentType='LLEGADA')
-            user = User.objects.get(username=i.userName)
-            bikeOwner = BikeOwner.objects.get(user=user)
+            entrance = segmentService.get({"estadia__exact":i.stay, "segmentType__exact":'LLEGADA'})
+            user = userService.getUser({"username__exact": i.userName})
+            bikeOwner = userService.getBikeOwner({"user__exact": user})
             item = {
               'userName': i.userName,
               'dateCreated': i.dateCreated,
@@ -59,7 +60,7 @@ class PendingStayView():
         userName = request.data['userName']
         isAuthorize = request.data['isAuthorize']
         
-        pendingStay = PendingStay.objects.get(userName=userName, isActive=True)
+        pendingStay = PendingStayService().get({"userName__exact":userName, "isActive__exact":True})
         stay = pendingStay.stay
         if (isAuthorize):
             stay.userName = userName
@@ -78,24 +79,30 @@ class PendingStayView():
       
     @api_view(['POST'])    
     def responseUser(request):
-        userName = request.data['userName']
-        try:
-          pendingStay = PendingStay.objects.get(userName=userName, notifyToUser=True)
-          pendingStay.notifyToUser = False
-          pendingStay.save()
-          return Response(status=status.HTTP_200_OK)
-        except PendingStay.DoesNotExist:
-          return Response(status=status.HTTP_404_NOT_FOUND) 
+      userName = request.data['userName']
+      
+      pendingStay = PendingStayService().get({"userName__exact":userName, "notifyToUser__exact":True})
+      if (pendingStay is not None):
+        pendingStay.notifyToUser = False
+        pendingStay.save()
+        return Response(status=status.HTTP_200_OK)
+      else:
+        return Response(status=status.HTTP_404_NOT_FOUND) 
       
     @api_view(['POST'])    
     def createPendingStay(request):
-      parking = BicycleParking.objects.get(number=request.data['parkingNumber'])
-      place = Place.objects.get(placeNumber=request.data['place'], bicycleParking=parking)
-      try:
-        associatedStay = Estadia.objects.get(place=place, isActive=True, isAnonymous=True)
-        pendingStay = PendingStay.objects.create(userName=request.data['userName'], stay=associatedStay)
+      service = BicycleParkingService()
+      parking = service.get({"number__exact": request.data['parkingNumber']})
+      place = service.getPlace({"placeNumber__exact": request.data['place'], "bicycleParking__exact": parking})
+      
+      associatedStay = EstadiaService().get({"place__exact": place, 
+                                             "isActive__exact": True, 
+                                             "isAnonymous__exact": True})
+      if (associatedStay is not None):
+        pendingStay = PendingStayService().create({ "userName": request.data['userName'],
+                                                    "stay": associatedStay})
         response = {'place': place.placeNumber, 'parking': parking.description}
         return Response(response, status=status.HTTP_200_OK)
-      except Estadia.DoesNotExist:
+      else:
         return Response(status=status.HTTP_404_NOT_FOUND)
       

@@ -1,21 +1,15 @@
 from rest_framework import status
 from rest_framework.decorators import api_view
-from django.http import JsonResponse
 from rest_framework.response import Response
 from ..serializers import NotificationEgressSerializer
-from ..models.notificationEgress import NotificationEgress
-from ..services import EstadiaService
+from ..services import EstadiaService, NotificationEgressService
 
 
 class NotificationEgressView():
 
     @api_view(['GET'])
     def notificationEgressGetUser(request, pk):
-        try:
-            task = NotificationEgress.objects.get(userName=pk, isActive=True)
-        except NotificationEgress.DoesNotExist:
-            task = None    
-
+        task = NotificationEgressService().get({"userName__exact": pk, "isActive__exact": True})
         if task is not None:
             serializer = NotificationEgressSerializer(task, many=False)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -24,7 +18,7 @@ class NotificationEgressView():
 
     @api_view(['GET'])
     def notificationEgressGetAll(request):
-        tasks = NotificationEgress.objects.all()
+        tasks = NotificationEgressService().getAll()
         serializer = NotificationEgressSerializer(tasks, many=True)
         data = []
         for task in tasks:
@@ -40,10 +34,9 @@ class NotificationEgressView():
             
         return Response(data, status=status.HTTP_200_OK)
 
-    #Actualiza el estados de casos sospechosos buscando por nombre de usuario
     @api_view(['PUT'])
     def notificationEgressUpdateUser(request, pk):
-        notifEgress = NotificationEgress.objects.get(userName=pk, isActive=True)
+        notifEgress = NotificationEgressService().get({"userName__exact":pk, "isActive__exact":True})
         notifEgress.isSuspected=request.data["isSuspected"]
         notifEgress.isActive=request.data["isActive"]
         notifEgress.save()
