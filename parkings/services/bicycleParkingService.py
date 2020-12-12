@@ -56,7 +56,7 @@ class BicycleParkingService:
     def getAll():
         return BicycleParkingDao().getAll()
     
-    def get(filters):
+    def get(self, filters):
         return BicycleParkingDao().getByFilters(filters)
     
     def filter(self, filters):

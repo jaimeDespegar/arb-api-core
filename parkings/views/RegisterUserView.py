@@ -107,11 +107,10 @@ class RegisterUserView():
     def registerBikeOwnerUpdateUser(request, pk):
         userEdited = request.data
         service = UserService()
-        
         user = service.getUser({"username__exact": pk})
         oldmail = service.getUser({"username__exact":pk, "email__exact":userEdited['email']})
                     
-        if (oldmail == None):
+        if (oldmail is not None):
             return Response("Error el email ya existe", status=status.HTTP_404_NOT_FOUND)#status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
         bikeOwner = service.getBikeOwner({"user__exact": user})

@@ -36,16 +36,19 @@ class EstadiaView():
     @api_view(['GET'])
     def getStateBike(request, pk):
         estadia = EstadiaService().get({"userName__exact":pk, "isActive__exact":True})
-        segment = SegmentService().get({"estadia__exact":estadia, "segmentType__exact":'LLEGADA'})
-                    
-        place = estadia.place
-        stateBike = {
-            "description": place.bicycleParking.description,
-            "number": place.bicycleParking.number,
-            "placeNumber": place.placeNumber,
-            "photo": segment.photoInBase64 if segment is not None else ''
-        }
-        return Response(stateBike)
+        if (estadia is not None):
+            segment = SegmentService().get({"estadia__exact":estadia, "segmentType__exact":'LLEGADA'})
+                        
+            place = estadia.place
+            stateBike = {
+                "description": place.bicycleParking.description,
+                "number": place.bicycleParking.number,
+                "placeNumber": place.placeNumber,
+                "photo": segment.photoInBase64 if segment is not None else ''
+            }
+            return Response(stateBike)
+        else:
+            return Response({'message': 'Error Stay Not Found.'}, status=status.HTTP_404_NOT_FOUND)
 
     @api_view(['POST'])
     def createStayEntrance(request):

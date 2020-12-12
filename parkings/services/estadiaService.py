@@ -111,7 +111,7 @@ class EstadiaService():
         responses = []
         
         for est in modelEstadias:
-            segments = self.segmentDao.findByFilters({"estadia__exact": est})
+            segments = self.segmentDao.filter({"estadia__exact": est})
             arrival = {}
             departure = {}
             for segment in segments:    

@@ -13,7 +13,7 @@ class StayDao:
         return Estadia.objects.filter(**filters)
     
     def insert(self, newStay):
-        Estadia.objects.create(**newStay)
+        return Estadia.objects.create(**newStay)
     
     def getAll(self):
         return Estadia.objects.all()

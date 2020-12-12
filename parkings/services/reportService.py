@@ -131,14 +131,13 @@ class ReportService():
                 "listaSospechosas": listSospechosasYear, 
                 "listaOk": listOkYear 
             }
-        print(reportStatistics)
+        
         return reportStatistics
 
 ########################################################################
 
     def generateAllEstadiaReport(self, pk):
         #pk=7
-        print("dias: ",pk)
         now = datetime.datetime.utcnow()
         lastWeek = now - datetime.timedelta(days=pk)
 
@@ -219,7 +218,7 @@ class ReportService():
             "listEgress": listEgress,
             "listEgressSuspected": listEgressSuspected,
         }
-        print(reportStatistics)
+
         return reportStatistics
 
 ########################################################################
@@ -279,12 +278,9 @@ class ReportService():
 
     #Se asume que un usuario puede tener solo 1 estadía por día
     def findUserEstadiaReport(self, pk, pk_days):
-        print("pk: ",pk)
-        print("pk_days: ",pk_days)
         #pk_days=7
         now = datetime.datetime.utcnow()
         lastWeek = now - datetime.timedelta(days=pk_days)
-
 
         listDaysWeek = ["LU","MA","MI","JU","VI","SA"]
         #general
@@ -292,7 +288,6 @@ class ReportService():
         listEgress = []
 
         for i in range(pk_days):
-            print("\n\n\n\n")
             day1= pk_days-i
             day2= pk_days-1-i
             fromDate = now - datetime.timedelta(days=day1)
@@ -301,11 +296,13 @@ class ReportService():
             estadiaUser = self.stayDao.filter({"dateCreated__lte": toDate, 
                                                "dateCreated__gte": fromDate,
                                                "userName__exact": pk})
-
+            print(estadiaUser)
             if(len(estadiaUser) == 1):
-                segmentUser = self.segmentDao.filter({"segmentType__exact": "SALIDA",
-                                          "estadia__exact": estadiaUser[0]})[0]
+                segmentUserList = self.segmentDao.filter({"segmentType__exact": "SALIDA",
+                                          "estadia__exact": estadiaUser[0]})
                 
+                segmentUser = segmentUserList[0] if len(segmentUserList)>0 else None
+
                 if(segmentUser is not None):
                     horaIngreso=int(segmentUser.estadia.dateCreated.strftime("%H"))
                     horaEgreso= int(segmentUser.dateCreated.strftime("%H"))
@@ -328,7 +325,8 @@ class ReportService():
                     if(segmentUser.estadia.dateCreated.strftime("%A")=="Saturday"): 
                         ReportService.listEntranceSabado.append(horaIngreso)
                         ReportService.listEgressSabado.append(horaEgreso)
-        
+                else:
+                    print("La estadia no tiene cargada el segmento de Salida")
         #Validación de listas NO vacías
         self.valdateListNotEmpty()
 
@@ -369,7 +367,6 @@ class ReportService():
             "listEntrance": listEntrance, 
             "listEgress": listEgress,
         }
-        print(reportStatistics)
 
         reportStatistics3 = {
             "modo": "Ingresos",
@@ -410,7 +407,6 @@ class ReportService():
         listEgress = []
 
         for i in range(pk_days):
-            print("\n\n\n\n")
             day1= pk_days-i
             day2= pk_days-1-i
             fromDate = now - datetime.timedelta(days=day1)
@@ -484,7 +480,7 @@ class ReportService():
             "listEntrance": listEntranceFinal, 
             "listEgress": listEgressFinal,
         }
-        print(reportStatistics)
+        
         self.cleanListDaysEntranceAndEgress()
         return reportStatistics
 
@@ -517,7 +513,6 @@ class ReportService():
         listEgressSuspectedSabado = []
 
         for i in range(pk_days):
-            print("\n\n\n\n")
             day1= pk_days-i
             day2= pk_days-1-i
             fromDate = now - datetime.timedelta(days=day1)
@@ -627,5 +622,5 @@ class ReportService():
             "listHoursParkingFinal": listHoursParkingFinal, 
             "listEgressSuspectedFinal": listEgressSuspectedFinal,
         }
-        print(reportStatistics)
+        
         return reportStatistics

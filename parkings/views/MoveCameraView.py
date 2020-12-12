@@ -53,7 +53,7 @@ class MoveCameraView():
         responseData = []
         service = BicycleParkingService()
         data0 = service.filter({"number__exact": 0})[0]
-
+        print(data)
         datafinal = service.createPlace({"placeNumber": int(data), 
                                          "occupied": False,
                                          "bicycleParking": data0})
