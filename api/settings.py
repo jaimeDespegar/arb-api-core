@@ -9,7 +9,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'c@2#nf0s+20&dlmp-!c%hh)wn+7k8zo3f3)bu_5j#lme4t173f'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -27,7 +27,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
-    'parkings'
+    'parkings',
+    'whitenoise.runserver_nostatic'
 ]
 
 MIDDLEWARE = [
@@ -39,8 +40,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'api.middleware.open_access_middleware'
+    'api.middleware.open_access_middleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware'
 ]
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 CORS_ORIGIN_ALLOW_ALL = True # If this is used then `CORS_ORIGIN_WHITELIST` will not have any effect
 CORS_ALLOW_CREDENTIALS = True
@@ -87,6 +91,9 @@ DATABASES = {
         },
     }
 }
+
+db_from_env = dj_database_url.config(conn_max_age=600)
+DATABASES['default'].update(db_from_env)
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
@@ -135,6 +142,9 @@ REST_FRAMEWORK = {
     )
 }
 
+MEDIA_ROOT = os.path.join(BASE_DIR,'media')
+MEDIA_URL = '/media/'
+
 # con el puerto 587 y habilitando las opciones de gmail de permitir aplicaciones no seguras.
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
@@ -143,6 +153,7 @@ EMAIL_HOST_USER = 'ppsarbungs2020@gmail.com'
 EMAIL_HOST_PASSWORD = 'ppsarb2020'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # configuraciones extras para email
 CSRF_COOKIE_SECURE = True
@@ -162,5 +173,12 @@ CSRF_COOKIE_HTTPONLY = True
 #CSRF_COOKIE_NAME = "csrftoken"
 #CSRF_HEADER_NAME = 'X-CSRFTOKEN'
 
+
+#location where django collect all static files
+STATIC_ROOT = os.path.join(BASE_DIR,'static')# location where you will store your static files
+
+STATICFILES_DIRS = [os.path.join(BASE_DIR,'project_name/static')]
+
 # Activate Django-Heroku.
 django_heroku.settings(locals())
+
