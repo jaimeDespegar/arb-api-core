@@ -85,10 +85,12 @@ DATABASES = {
     #    'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     #}
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'OPTIONS': {
-            'read_default_file': '/etc/mysql/my.cnf',
-        },
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'gnzthnrn ',
+        'USER': 'gnzthnrn',
+        'PASSWORD': 'M0Y7TktK8fKnuJVVK7IGzfmaYE26DjhL',
+        'HOST': 'dumbo.db.elephantsql.com',
+        'PORT': '5432'
     }
 }
 
