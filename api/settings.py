@@ -1,5 +1,6 @@
 
 import os
+import django_heroku
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -80,10 +81,12 @@ DATABASES = {
     #    'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     #}
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'OPTIONS': {
-            'read_default_file': '/etc/mysql/my.cnf',
-        },
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'dfq0q4fd9blj4k',
+        'USER': 'nbqfsfokdqlwwp',
+        'PASSWORD': 'c380f39114622f450c18804aeacde512ff71a5dc096ab0aa60977529feec076a',
+        'HOST': 'ec2-3-248-4-172.eu-west-1.compute.amazonaws.com',
+        'PORT': '5432'
     }
 }
 
@@ -144,8 +147,11 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 # configuraciones extras para email
-CSRF_COOKIE_SECURE = True
-CSRF_COOKIE_HTTPONLY = True
+#CSRF_COOKIE_SECURE = True
+#CSRF_COOKIE_HTTPONLY = True
+CSRF_COOKIE_SECURE = False
+SESSION_COOKIE_SECURE = False
+
 #SESSION_COOKIE_SECURE = True
 #CSRF_HEADER_NAME = "HTTP_X_CSRFTOKEN"
 #CORS_ALLOW_CREDENTIALS = True
@@ -160,3 +166,6 @@ CSRF_COOKIE_HTTPONLY = True
 #)
 #CSRF_COOKIE_NAME = "csrftoken"
 #CSRF_HEADER_NAME = 'X-CSRFTOKEN'
+
+# Activate Django-Heroku.
+django_heroku.settings(locals())
