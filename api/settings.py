@@ -82,7 +82,7 @@ DATABASES = {
     #}
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'gnzthnrn ',
+        'NAME': 'gnzthnrn',
         'USER': 'gnzthnrn',
         'PASSWORD': 'M0Y7TktK8fKnuJVVK7IGzfmaYE26DjhL',
         'HOST': 'dumbo.db.elephantsql.com',
@@ -147,8 +147,11 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 # configuraciones extras para email
-CSRF_COOKIE_SECURE = True
-CSRF_COOKIE_HTTPONLY = True
+#CSRF_COOKIE_SECURE = True
+#CSRF_COOKIE_HTTPONLY = True
+CSRF_COOKIE_SECURE = False
+SESSION_COOKIE_SECURE = False
+
 #SESSION_COOKIE_SECURE = True
 #CSRF_HEADER_NAME = "HTTP_X_CSRFTOKEN"
 #CORS_ALLOW_CREDENTIALS = True
