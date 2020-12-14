@@ -42,13 +42,13 @@ class ReportService():
         listOk = []
         listSospechosas = []
 
-        listLastDaysMonth = ["4_semanas","3_semanas","2_semanas","1_semana"]
+        listLastDaysMonth = ["4 semanas","3 semanas","2 semanas","1 semana"]
         listOkMonth = []
         listSospechosasMonth = [] 
         cantSospechosasSemanal= 0
         cantOkSemanal= 0
 
-        listLastDaysYear= ["12_meses","11_meses","10_meses","9_meses","8_meses","7_meses","6_meses","5_meses","4_meses","3_meses","2_meses","1_mes"]
+        listLastDaysYear= ["12 meses","11 meses","10 meses","9 meses","8 meses","7 meses","6 meses","5 meses","4 meses","3 meses","2 meses","1 mes"]
         listOkYear = []
         listSospechosasYear = [] 
         cantSospechosasMensual= 0
@@ -57,14 +57,13 @@ class ReportService():
         count=0
         for i in range(pk_days):
             count= i+1
-            print("\n\n")
             #busco desde el día más viejo
             day1= pk_days-i
             day2= pk_days-1-i
             fromDate = now - datetime.timedelta(days=day1)
             toDate = now - datetime.timedelta(days=day2)
 
-            listLastDaysWeek.append(toDate.strftime("%a %x"))
+            listLastDaysWeek.append(toDate.strftime("%d/%m/%Y"))
             
 
             totales = self.stayDao.filter({"dateCreated__lte": toDate, 
@@ -148,7 +147,6 @@ class ReportService():
         listEgressSuspected = []
 
         for i in range(pk):
-            print("\n\n\n\n")
             day1= pk-i
             day2= pk-1-i
             fromDate = now - datetime.timedelta(days=day1)
@@ -196,9 +194,9 @@ class ReportService():
                     if(len(sospechosa)>=1):
                         cantEgresosSospechososTN= cantEgresosSospechososTN +1
 
-            listLastDaysWeek.append(toDate.strftime("%d"+str(" TM")))
-            listLastDaysWeek.append(toDate.strftime("%d"+str(" TT")))
-            listLastDaysWeek.append(toDate.strftime("%d"+str(" TN")))
+            listLastDaysWeek.append(toDate.strftime("%d/%m"+str(" Mañana")))
+            listLastDaysWeek.append(toDate.strftime("%d/%m"+str(" Tarde")))
+            listLastDaysWeek.append(toDate.strftime("%d/%m"+str(" Noche")))
 
             listEntrance.append(cantIngresosTM)
             listEntrance.append(cantIngresosTT)
@@ -296,7 +294,7 @@ class ReportService():
             estadiaUser = self.stayDao.filter({"dateCreated__lte": toDate, 
                                                "dateCreated__gte": fromDate,
                                                "userName__exact": pk})
-            print(estadiaUser)
+            
             if(len(estadiaUser) == 1):
                 segmentUserList = self.segmentDao.filter({"segmentType__exact": "SALIDA",
                                           "estadia__exact": estadiaUser[0]})

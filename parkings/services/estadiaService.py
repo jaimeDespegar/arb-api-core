@@ -150,10 +150,28 @@ class EstadiaService():
         return self.reportService.buildReportStatistics(self.findAll(), self.findSuspectEgress())
 
     def generateWeekReport(self, pk_days):
-        return self.reportService.generateWeekReport(pk_days)
+        response = self.reportService.generateWeekReport(pk_days)
+        newResponse = []
+        newResponse.append(['Fechas', 'Exitosas','Sospechosas'])
+        for index, value in enumerate(response['listaFechas']):
+            newItem = [
+                value, response['listaOk'][index], response['listaSospechosas'][index]
+            ]
+            newResponse.append(newItem)
+        
+        return newResponse
 
     def generateAllEstadiaReport(self, pk):
-        return self.reportService.generateAllEstadiaReport(pk)
+        response = self.reportService.generateAllEstadiaReport(pk)
+        newResponse = []
+        newResponse.append(['Fecha/Turno', 'Entradas','Salidas'])
+        for index, value in enumerate(response['listLastDaysWeek']):
+            newItem = [
+                value, response['listEntrance'][index], response['listEgress'][index]
+            ]
+            newResponse.append(newItem)
+            
+        return newResponse
 
     #Se asume que un usuario puede tener solo 1 estadía por día
     def findUserEstadiaReport(self, pk, pk_days):
@@ -161,7 +179,16 @@ class EstadiaService():
 
     #Se asume que por cada dia hay muchos ingresos y egresos
     def findAllEstadiaReport(self, pk_days):
-        return self.reportService.findAllEstadiaReport(pk_days)
+        response = self.reportService.findAllEstadiaReport(pk_days)
+        entrances = []
+        egress = []
+        entrances.append(['Día', 'Entradas'])
+        egress.append(['Día', 'Salidas'])
+        for index, value in enumerate(response['listDaysWeek']):
+            entrances.append([value, response['listEntrance'][0][index]])
+            egress.append([value, response['listEgress'][0][index]])
+
+        return {'entrances': entrances, 'egress': egress}
 
     #Se asume que un usuario puede tener solo 1 estadía por día
     def findPromedioHourEstadiaReport(self):
@@ -169,7 +196,20 @@ class EstadiaService():
 
     #Se asume que por cada dia hay muchos ingresos y egresos
     def findAllEstadiaSuspectedAndPeakTimeReport(self, pk_days):
-        return self.reportService.findAllEstadiaSuspectedAndPeakTimeReport(pk_days)
+        response = self.reportService.findAllEstadiaSuspectedAndPeakTimeReport(pk_days)
+        entrances = []
+        suspects = []
+        entrances.append(['Día', 'Horario pico'])
+        suspects.append(['Día', 'Horario pico'])
+        for index, value in enumerate(response['listDaysWeek']):
+            entrances.append([value, response['listHoursParkingFinal'][0][index]])
+            suspects.append([value, response['listEgressSuspectedFinal'][0][index]])
+
+        newResponse = {
+            'parkings': entrances,
+            'suspects': suspects
+        }    
+        return newResponse
 
     def getStatusStay(self, userName):
         
