@@ -18,8 +18,7 @@ urlpatterns = [
     path('bicycleParkingAndPlaces/', BicycleParkingView.getAllBicyclesParkings, name="bicycleParkingAndPlaces"),
     path('movebicycleparking-create/', MoveCameraView.moveBicycleparkingCreate, name="movebicycleparking-create"),
     path('moveplace-create/', MoveCameraView.movePlaceCreate, name="moveplace-create"),
-
-
+    path('bicycleParking-find/', BicycleParkingView.parseBicycleParkingFind, name="bicycleParking-find"),
 
 
     # Estadia

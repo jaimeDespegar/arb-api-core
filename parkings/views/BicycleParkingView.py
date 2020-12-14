@@ -29,6 +29,26 @@ class BicycleParkingView():
 
 
     @api_view(['GET'])
+    def parseBicycleParkingFind(request):
+
+        number = request.query_params.get('parking.number', None)#userName
+        print("number: ",number)
+        service = BicycleParkingService()
+
+        filters = {}
+        
+        if (number is not None):
+            bicycleParking = service.getBicycle({"number__exact": number})
+            print("bicycleParking: ",bicycleParking)
+            tasks = BicycleParkingService.getOneBicycleParkingAndPlaces(bicycleParking)
+            return Response(tasks, status=status.HTTP_200_OK)
+        else:
+            tasks = BicycleParkingService.getAllBicycleParkingAndPlaces()
+            return Response(tasks, status=status.HTTP_200_OK)
+
+
+
+    @api_view(['GET'])
     def getBicycleParking(request, pk):
         tasks = BicycleParkingService.get({"id__exact":pk})
         serializer = BicycleParkingSerializer(tasks, many=False)
