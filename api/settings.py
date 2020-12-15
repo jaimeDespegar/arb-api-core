@@ -143,7 +143,6 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587 #465 #25
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
-
 # configuraciones extras para email
 #CSRF_COOKIE_SECURE = True
 #CSRF_COOKIE_HTTPONLY = True
