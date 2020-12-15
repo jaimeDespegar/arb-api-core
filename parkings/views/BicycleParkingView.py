@@ -10,11 +10,20 @@ class BicycleParkingView():
     @api_view(['POST'])
     def bicycleParkingCreate(request):
         data = request.data
+        countPlaces = int(data['places'])
+        print('places ' + str(countPlaces))
         responseData = []
-
-        serializer = BicycleParkingSerializer(data=request.data)
+        service = BicycleParkingService()
+        
+        serializer = BicycleParkingSerializer(data=data)
         if serializer.is_valid():
-            serializer.save()
+            parking = serializer.save()
+            for index in range (0, countPlaces):
+                place = {
+                    'placeNumber': index+1,
+                    'bicycleParking': parking
+                }
+                service.createPlace(place)    
             responseData.append(serializer.data)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -41,7 +50,7 @@ class BicycleParkingView():
 
     @api_view(['PUT'])
     def updateBicicleParking(request):
-        parking = BicycleParkingService.get({"number__exact": request.data['number']})
+        parking = BicycleParkingService().get({"number__exact": request.data['number']})
         serializer = BicycleParkingSerializer(instance=parking, data=request.data)
         
         if serializer.is_valid():
@@ -54,7 +63,7 @@ class BicycleParkingView():
 
     @api_view(['DELETE'])
     def bicicleParkingDelete(request, number):
-        parking = BicycleParkingService.get({"number__exact": number})
+        parking = BicycleParkingService().get({"number__exact": number})
         parking.delete()
         return Response("Parking borrado satisfactoriamente", status=status.HTTP_200_OK)
 
