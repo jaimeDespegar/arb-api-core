@@ -67,3 +67,39 @@ class BicycleParkingService:
     
     def getPlace(self, filters):
         return PlaceDao().get(filters)
+
+    def getBicycle(self, filters):
+        return BicycleParkingDao().getBicycle(filters)
+
+    def getOneBicycleParkingAndPlaces(bike):
+
+        response = []
+
+        places = PlaceDao().filter({ 'bicycleParking__exact': bike })
+        placesAux = []
+        for place in places:
+            if (place.occupied):
+                filtersStay = { "place__exact": place, "isActive__exact": True }
+                stay = StayDao().get(filtersStay)
+                if (stay is not None and stay.isAnonymous):
+                    dateAssociatedStay = stay.dateCreated
+                else:
+                    dateAssociatedStay = ''
+            else:
+                dateAssociatedStay = ''
+                
+            aux = {
+                    "placeNumber": place.placeNumber,
+                    "occupied": place.occupied,
+                    "dateAssociatedStay": dateAssociatedStay
+                    }
+            placesAux.append(aux)  
+            
+        bicycleAndPlace = {
+            "description": bike.description,
+            "number": bike.number,
+            "places": placesAux
+        }
+        response.append(bicycleAndPlace)
+
+        return response

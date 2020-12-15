@@ -11,3 +11,9 @@ class BicycleParkingDao:
     
     def filter(self, filters):
         return BicycleParking.objects.filter(**filters)
+
+    def getBicycle(self, filters):
+        try:
+            return BicycleParking.objects.get(**filters)
+        except BicycleParking.DoesNotExist:
+            return None
