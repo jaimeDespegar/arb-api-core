@@ -13,4 +13,4 @@ class NotificationEgress(models.Model):
     
 
     def __str__(self):
-        return 'Alerta de egreso para el usuario ' + self.userName
+        return 'Alerta de egreso para el usuario ' + self.userName + ', isActive ' + str(self.isActive) 

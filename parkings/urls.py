@@ -18,8 +18,7 @@ urlpatterns = [
     path('bicycleParkingAndPlaces/', BicycleParkingView.getAllBicyclesParkings, name="bicycleParkingAndPlaces"),
     path('movebicycleparking-create/', MoveCameraView.moveBicycleparkingCreate, name="movebicycleparking-create"),
     path('moveplace-create/', MoveCameraView.movePlaceCreate, name="moveplace-create"),
-
-
+    path('bicycleParking-find/', BicycleParkingView.parseBicycleParkingFind, name="bicycleParking-find"),
 
 
     # Estadia
@@ -47,7 +46,6 @@ urlpatterns = [
     # Registros de Usuarios
     path('bikeOwner-create/', RegisterUserView.registerBikeOwnerCreate, name="bikeOwner-create"),
     path('bikeOwner-getAll/', RegisterUserView.registerBikeOwnerGetAll, name="bikeOwner-getAll"),
-    path('bikeOwner-get/<int:pk>/', RegisterUserView.registerBikeOwnerGet, name="bikeOwner-get"),
     path('bikeOwner-getUser/<str:pk>/', RegisterUserView.registerBikeOwnerGetUser, name="bikeOwner-getUser"),
     path('bikeOwner/update/<str:pk>/', RegisterUserView.registerBikeOwnerUpdateUser, name="bikeOwner-updateUser"),
     path('bikeOwner-delete/<str:pk>/', RegisterUserView.bikeOwnerDelete, name="bikeOwner-delete"),

@@ -6,7 +6,7 @@ from ..serializers import UserSerializer, BikeOwnerSerializer, CreateUserSeriali
 from ..models.user import BikeOwner
 from django.contrib.auth.models import User
 
-
+# BORRAR ?
 class RecoveryUserView():
     #No sirve ya que se necesita el token o mandar mails!!
     @api_view(['PUT'])

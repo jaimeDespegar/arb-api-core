@@ -1,5 +1,6 @@
 
 import os
+import django_heroku
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -8,12 +9,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'c@2#nf0s+20&dlmp-!c%hh)wn+7k8zo3f3)bu_5j#lme4t173f'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False #True (origen)
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
 
-
+# Application definition
 
 INSTALLED_APPS = [
     'django.contrib.sites',  # <-------------*
@@ -81,28 +82,29 @@ WSGI_APPLICATION = 'api.wsgi.application'
 #    }
 #}
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'parkings',
-        'USER': 'admin',
-        'PASSWORD': 'admin',
-        'HOST': 'db',
-        'PORT': 3306,
-    }
-}
-
+# docker
 #DATABASES = {
 #    'default': {
-#        'ENGINE': 'django.db.backends.postgresql',
-#        'NAME': 'postgres',
-#        'USER': 'postgres',
-#        'PASSWORD' : 'postgres',
+#        'ENGINE': 'django.db.backends.mysql',
+#        'NAME': 'parkings',
+#        'USER': 'admin',
+#        'PASSWORD': 'admin',
 #        'HOST': 'db',
-#        'PORT': 5432
+#        'PORT': 3306,
 #    }
 #}
 
+# heroku
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'dfq0q4fd9blj4k',
+        'USER': 'nbqfsfokdqlwwp',
+        'PASSWORD': 'c380f39114622f450c18804aeacde512ff71a5dc096ab0aa60977529feec076a',
+        'HOST': 'ec2-3-248-4-172.eu-west-1.compute.amazonaws.com',
+        'PORT': '5432'
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
@@ -156,14 +158,14 @@ REST_FRAMEWORK = {
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587 #465 #25
-EMAIL_HOST_USER = 'ppsarbungs2020@gmail.com'
-EMAIL_HOST_PASSWORD = 'ppsarb2020'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 # configuraciones extras para email
-CSRF_COOKIE_SECURE = True
-CSRF_COOKIE_HTTPONLY = True
+#CSRF_COOKIE_SECURE = True
+#CSRF_COOKIE_HTTPONLY = True
+CSRF_COOKIE_SECURE = False
+SESSION_COOKIE_SECURE = False
+
 #SESSION_COOKIE_SECURE = True
 #CSRF_HEADER_NAME = "HTTP_X_CSRFTOKEN"
 #CORS_ALLOW_CREDENTIALS = True
@@ -178,3 +180,6 @@ CSRF_COOKIE_HTTPONLY = True
 #)
 #CSRF_COOKIE_NAME = "csrftoken"
 #CSRF_HEADER_NAME = 'X-CSRFTOKEN'
+
+# Activate Django-Heroku.
+django_heroku.settings(locals())

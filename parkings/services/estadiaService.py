@@ -1,53 +1,53 @@
-from ..models import Estadia, Segment
-from ..models import MoveCamera, Estadia, Place, NotificationEgress, BicycleParking, PendingStay
+
 import time
 import datetime
-from collections import Counter
 from .reportService import ReportService
-
+from ..daos import SegmentDao, BicycleParkingDao, PlaceDao, PendingStayDao
+from ..daos import NotificationEgressDao, StayDao
 
 class EstadiaService():
 
     def __init__(self):
         self.reportService = ReportService()
-
-    def findAll(self):
-        items = Estadia.objects.all()
-        return self.parseEstadias(items)
+        self.segmentDao = SegmentDao()
+        self.bicycleParkingDao = BicycleParkingDao()
+        self.placeDao = PlaceDao()
+        self.pendingStayDao = PendingStayDao()
+        self.notificationEgressDao = NotificationEgressDao()
+        self.stayDao = StayDao()
         
+    def findAll(self):
+        items = self.stayDao.getAll()
+        return self.parseEstadias(items)
+    
+    def filter(self, filters):
+        return self.stayDao.filter(filters)
+            
     def findByFilters(self, filters, isSuspected):
-        estadias = Estadia.objects.filter(**filters)
+        estadias = self.stayDao.filter(filters)
         staysFiltered = []
         if (isSuspected):
             for e in estadias:
-                itemOk = len(NotificationEgress.objects.filter(estadia=e)) > 0
+                itemOk = len(self.notificationEgressDao.filter({"estadia__exact":e})) > 0
                 if (itemOk):
                     staysFiltered.append(e)
         else:
             staysFiltered = estadias                       
         return self.parseEstadias(staysFiltered)
 
-
-    def findSuspect(self):
-        items = NotificationEgress.objects.all()
-        estadias = Estadia.objects.filter(dateCreated__lte=toDate, 
-                                          dateCreated__gte=fromDate,
-                                          isAnonymous=True)
-        return estadias
-
-
     def createAnonymousStay(self, arrivalMove):
-        place= Place.objects.filter(placeNumber= arrivalMove.placeNumber)[0]
-        anonimo = Estadia.objects.create(placeUsed=arrivalMove.placeNumber, 
-                                         userName='Anonimo',
-                                         isAnonymous=True,
-                                         place=place)
-        
-        Segment.objects.create(segmentType='LLEGADA', 
-                               photoPath=arrivalMove.pathPhoto, 
-                               photoInBase64=arrivalMove.photoInBase64,
-                               estadia=anonimo)
-        
+        place= self.placeDao.filter({"placeNumber__exact": arrivalMove.placeNumber})[0]
+        anonimo = self.stayDao.insert({"placeUsed": arrivalMove.placeNumber, 
+                                        "userName": 'Anonimo',
+                                        "isAnonymous": True,
+                                        "place": place})
+
+        self.segmentDao.insert({
+            "segmentType": 'LLEGADA', 
+            "photoPath": arrivalMove.pathPhoto, 
+            "photoInBase64": arrivalMove.photoInBase64,
+            "estadia": anonimo
+        })
         #buscar el lugar asociado y ponerlo en False, va a romper!! filtrar con placeNumber
         place.occupied= True
         place.save()
@@ -55,36 +55,28 @@ class EstadiaService():
     
     #solo el sgmento de salida (la estadia ya está creada)
     def createAnonymousStayOUT(self, departureMove, estadia):
-        Segment.objects.create(segmentType='SALIDA', 
-                               photoPath=departureMove.pathPhoto, 
-                               photoInBase64=departureMove.photoInBase64,
-                               estadia=estadia)
         
+        self.segmentDao.insert({
+            "segmentType": 'SALIDA', 
+            "photoPath": departureMove.pathPhoto, 
+            "photoInBase64": departureMove.photoInBase64,
+            "estadia": estadia
+        })
         #buscar el lugar asociado y ponerlo en False, va a romper!! filtrar con placeNumber
-        place= estadia.place #Place.objects.filter(placeNumber= estadia.place)[0] CHEQUEAR!
+        place= estadia.place
         place.occupied= False
         place.save()
 
         estadia.isActive = False
         estadia.save()
         print('Estadia anonima cerrada')
-
-    
-    def updateAnonymousCase(self):
-        exitMoves = MoveCamera.objects.filter(occupied=False, registered=False)
-        
-        for move in exitMoves:
-            estadia = Estadia.objects.get(placeUsed=move.placeNumber, userName='Anonimo')
     
     def registerEntrance(self, data):
-        
-        parking = BicycleParking.objects.get(number=data['parkingNumber'])
-        place = Place.objects.get(placeNumber=data['place'], bicycleParking=parking)
-        try:
-            stayCreated = Estadia.objects.get(place=place, isActive=True)
-        except Estadia.DoesNotExist:
-            stayCreated = None
-        
+        # TODO chequear
+        parking = self.bicycleParkingDao.getByFilters({"number__exact": data['parkingNumber']})
+        place = self.placeDao.get({"placeNumber__exact":data['place'], "bicycleParking__exact": parking})
+        stayCreated = self.stayDao.get({"place__exact":place,"isActive__exact":True})
+
         if (stayCreated is not None and stayCreated.isAnonymous):
             stayCreated.userName = data['userName']
             stayCreated.isAnonymous = False
@@ -100,11 +92,8 @@ class EstadiaService():
 
 
     def registerEgress(self, data):
-        try: 
-            stayCreated = Estadia.objects.get(userName=data['userName'], isActive=True)
-        except Estadia.DoesNotExist:
-            stayCreated = None
-        
+        stayCreated = self.stayDao.get({"userName__exact":data['userName'],"isActive__exact":True})
+
         if (stayCreated is not None):
             stayCreated.isActive = False
             stayCreated.save()
@@ -122,7 +111,7 @@ class EstadiaService():
         responses = []
         
         for est in modelEstadias:
-            segments = Segment.objects.filter(estadia=est)
+            segments = self.segmentDao.filter({"estadia__exact": est})
             arrival = {}
             departure = {}
             for segment in segments:    
@@ -154,21 +143,35 @@ class EstadiaService():
         return responses
 
     def findSuspectEgress(self):       
-        estadiaSuspected = NotificationEgress.objects.filter(isSuspected=True)
-        return estadiaSuspected
-
-    def findSuspectEgressInOneStadia(self, estadiaAnalizar):
-        estadiaSuspected = NotificationEgress.objects.filter(isSuspected=True)
+        estadiaSuspected = self.notificationEgressDao.filter({"isSuspected__exact":True})
         return estadiaSuspected
     
     def buildReportStatistics(self):
         return self.reportService.buildReportStatistics(self.findAll(), self.findSuspectEgress())
 
     def generateWeekReport(self, pk_days):
-        return self.reportService.generateWeekReport(pk_days)
+        response = self.reportService.generateWeekReport(pk_days)
+        newResponse = []
+        newResponse.append(['Fechas', 'Exitosas','Sospechosas'])
+        for index, value in enumerate(response['listaFechas']):
+            newItem = [
+                value, response['listaOk'][index], response['listaSospechosas'][index]
+            ]
+            newResponse.append(newItem)
+        
+        return newResponse
 
     def generateAllEstadiaReport(self, pk):
-        return self.reportService.generateAllEstadiaReport(pk)
+        response = self.reportService.generateAllEstadiaReport(pk)
+        newResponse = []
+        newResponse.append(['Fecha/Turno', 'Entradas','Salidas'])
+        for index, value in enumerate(response['listLastDaysWeek']):
+            newItem = [
+                value, response['listEntrance'][index], response['listEgress'][index]
+            ]
+            newResponse.append(newItem)
+            
+        return newResponse
 
     #Se asume que un usuario puede tener solo 1 estadía por día
     def findUserEstadiaReport(self, pk, pk_days):
@@ -176,7 +179,16 @@ class EstadiaService():
 
     #Se asume que por cada dia hay muchos ingresos y egresos
     def findAllEstadiaReport(self, pk_days):
-        return self.reportService.findAllEstadiaReport(pk_days)
+        response = self.reportService.findAllEstadiaReport(pk_days)
+        entrances = []
+        egress = []
+        entrances.append(['Día', 'Entradas'])
+        egress.append(['Día', 'Salidas'])
+        for index, value in enumerate(response['listDaysWeek']):
+            entrances.append([value, response['listEntrance'][0][index]])
+            egress.append([value, response['listEgress'][0][index]])
+
+        return {'entrances': entrances, 'egress': egress}
 
     #Se asume que un usuario puede tener solo 1 estadía por día
     def findPromedioHourEstadiaReport(self):
@@ -184,30 +196,45 @@ class EstadiaService():
 
     #Se asume que por cada dia hay muchos ingresos y egresos
     def findAllEstadiaSuspectedAndPeakTimeReport(self, pk_days):
-        return self.reportService.findAllEstadiaSuspectedAndPeakTimeReport(pk_days)
+        response = self.reportService.findAllEstadiaSuspectedAndPeakTimeReport(pk_days)
+        entrances = []
+        suspects = []
+        entrances.append(['Día', 'Horario pico'])
+        suspects.append(['Día', 'Horario pico'])
+        for index, value in enumerate(response['listDaysWeek']):
+            entrances.append([value, response['listHoursParkingFinal'][0][index]])
+            suspects.append([value, response['listEgressSuspectedFinal'][0][index]])
+
+        newResponse = {
+            'parkings': entrances,
+            'suspects': suspects
+        }    
+        return newResponse
 
     def getStatusStay(self, userName):
-        try:
-            pending = PendingStay.objects.get(userName=userName, isActive=True)
+        
+        pending = self.pendingStayDao.get({"userName__exact":userName,"isActive__exact":True})
+
+        if (pending is not None):
             status = 'PENDING'
             return {
-                    'status': status, 
-                    'parking': pending.stay.place.bicycleParking.description, 
-                    'place': pending.stay.place.placeNumber
-                   }
-        except PendingStay.DoesNotExist:
-            try:
-                stay = Estadia.objects.filter(userName=userName, isActive=True)
-                status = 'ENTRANCE_DONE' if len(stay) > 0 else 'WITH_OUT_STAY'
-            except Estadia.DoesNotExist:
-                status = 'WITH_OUT_STAY'
+                'status': status, 
+                'parking': pending.stay.place.bicycleParking.description, 
+                'place': pending.stay.place.placeNumber
+            }
+        else:
+            stay = self.stayDao.filter({"userName__exact":userName,"isActive__exact":True})
+            status = 'ENTRANCE_DONE' if len(stay) > 0 else 'WITH_OUT_STAY'
         
         return {'status': status}
 
     def desactiveOldEstadias(self):
         now = datetime.datetime.utcnow()
-        totales = Estadia.objects.filter(isActive=True)
+        totales = self.stayDao.filter({"isActive__exact": True})
         for estadia in totales:
             if(estadia.dateCreated.strftime("%x")!= now.strftime("%x")):
                 estadia.isActive=False
                 estadia.save()
+                
+    def get(self, filters):
+        return self.stayDao.get(filters)
